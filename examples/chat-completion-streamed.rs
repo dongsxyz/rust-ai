@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use rust_ai::openai::{apis::chat_completion::ChatCompletion, types::chat_completion::MessageRole};
+use rust_ai::openai::{ChatCompletion, types::chat_completion::MessageRole};
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     std::env::set_var("RUST_LOG", "info");

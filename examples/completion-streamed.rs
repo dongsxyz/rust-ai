@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use rust_ai::openai::apis::completion::Completion;
+use rust_ai::openai::Completion;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     std::env::set_var("RUST_LOG", "info");

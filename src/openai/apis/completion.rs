@@ -1,7 +1,17 @@
+//! 
+//! Given a prompt, the model will return one or more predicted completions, 
+//! and can also return the probabilities of alternative tokens at each position.
+//! 
+//! Source: OpenAI documentation
+
+////////////////////////////////////////////////////////////////////////////////
+
 use std::collections::HashMap;
 
 use crate::openai::{
-    endpoint::{endpoint_filter, request_endpoint, request_endpoint_stream, Endpoint},
+    endpoint::{
+        endpoint_filter, request_endpoint, request_endpoint_stream, Endpoint, EndpointVariant,
+    },
     types::{
         common::Error,
         completion::{Chunk, CompletionResponse},
@@ -12,6 +22,9 @@ use log::{debug, warn};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
+/// Given a prompt, the model will return one or more predicted completions,
+/// and can also return the probabilities of alternative tokens at each
+/// position.
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Completion {
@@ -193,7 +206,7 @@ impl Completion {
 
         let mut ret_val: Vec<Chunk> = vec![];
 
-        request_endpoint_stream(&self, &Endpoint::Completion_v1, |res| {
+        request_endpoint_stream(&self, &Endpoint::Completion_v1, EndpointVariant::None,|res| {
             if let Ok(chunk_data_raw) = res {
                 chunk_data_raw.split("\n").for_each(|chunk_data| {
                     let chunk_data = chunk_data.trim().to_string();
@@ -241,7 +254,7 @@ impl Completion {
 
         let mut completion_response: Option<CompletionResponse> = None;
 
-        request_endpoint(&self, &Endpoint::Completion_v1, |res| {
+        request_endpoint(&self, &Endpoint::Completion_v1, EndpointVariant::None, |res| {
             if let Ok(text) = res {
                 if let Ok(response_data) = serde_json::from_str::<CompletionResponse>(&text) {
                     debug!(target: "openai", "Response parsed, completion response deserialized.");

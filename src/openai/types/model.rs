@@ -15,7 +15,7 @@
 //! | CodexLimited | A set of models that can understand and generate code, including translating natural language to code |
 //! | Moderation   | A fine-tuned model that can detect whether text may be sensitive or unsafe |
 //! | GPT-3	       | A set of models that can understand and generate natural language |
-//! 
+
 ////////////////////////////////////////////////////////////////////////////////
 
 use serde::{Deserialize, Serialize};

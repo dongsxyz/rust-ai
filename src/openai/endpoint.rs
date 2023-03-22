@@ -49,6 +49,18 @@ pub fn endpoint_filter(model: &Model, endpoint: &Endpoint) -> bool {
             Model::TEXT_SEARCH_ADA_DOC_001,
         ]
         .contains(&model),
+        _ => false,
+    }
+}
+
+pub enum EndpointVariant {
+    None,
+    Extended(String),
+}
+
+impl From<String> for EndpointVariant {
+    fn from(value: String) -> Self {
+        Self::Extended(value)
     }
 }
 
@@ -58,6 +70,7 @@ pub enum Endpoint {
     ChatCompletion_v1,
     Completion_v1,
     Edit_v1,
+    Image_v1,
     AudioTranscription_v1,
     AudioTranslation_v1,
     FineTune_v1,
@@ -78,15 +91,35 @@ impl Into<&'static str> for Endpoint {
             Self::ChatCompletion_v1 => "/v1/chat/completions",
             Self::Completion_v1 => "/v1/completions",
             Self::Edit_v1 => "/v1/edits",
+            Self::Image_v1 => "/v1/images",
             Self::Embedding_v1 => "/v1/embeddings",
             Self::FineTune_v1 => "/v1/fine-tunes",
         }
     }
 }
 
+#[allow(non_camel_case_types)]
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub enum ImageEndpointVariant {
+    Generation,
+    Editing,
+    Variation,
+}
+
+impl Into<String> for ImageEndpointVariant {
+    fn into(self) -> String {
+        String::from(match self {
+            Self::Editing => "/edits",
+            Self::Variation => "/variantions",
+            Self::Generation => "/generations",
+        })
+    }
+}
+
 pub async fn request_endpoint<'a, T, F>(
     json: &'a T,
     endpoint: &'a Endpoint,
+    variant: EndpointVariant,
     mut cb: F,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
@@ -95,7 +128,13 @@ where
 {
     let client = reqwest::Client::new();
     let config = Config::load();
-    let mut req = client.post(format!("https://api.openai.com{}", endpoint));
+    let url = if let EndpointVariant::Extended(var) = variant {
+        format!("https://api.openai.com{}{}", endpoint, var.to_owned())
+    } else {
+        format!("https://api.openai.com{}", endpoint)
+    };
+
+    let mut req = client.post(url);
     req = req.header("Authorization", format!("Bearer {}", config.openai.api_key));
 
     let res = req.json(&json).send().await?;
@@ -114,6 +153,7 @@ where
 pub async fn request_endpoint_stream<'a, T, F>(
     json: &'a T,
     endpoint: &'a Endpoint,
+    variant: EndpointVariant,
     mut cb: F,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
@@ -122,7 +162,13 @@ where
 {
     let client = reqwest::Client::new();
     let config = Config::load();
-    let mut req = client.post(format!("https://api.openai.com{}", endpoint));
+    let url = if let EndpointVariant::Extended(var) = variant {
+        format!("https://api.openai.com{}{}", endpoint, var.to_owned())
+    } else {
+        format!("https://api.openai.com{}", endpoint)
+    };
+
+    let mut req = client.post(url);
     req = req.header("Authorization", format!("Bearer {}", config.openai.api_key));
 
     let mut res = req.json(&json).send().await?;

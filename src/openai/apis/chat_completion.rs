@@ -1,16 +1,27 @@
+//! 
+//! Given a chat conversation, the model will return a chat completion response.
+//! 
+//! Source: OpenAI documentation
+
+////////////////////////////////////////////////////////////////////////////////
+
 use std::collections::HashMap;
 
 use crate::openai::{
-    endpoint::{endpoint_filter, request_endpoint, request_endpoint_stream, Endpoint},
+    endpoint::{
+        endpoint_filter, request_endpoint, request_endpoint_stream, Endpoint, EndpointVariant,
+    },
     types::{
         chat_completion::{ChatCompletionResponse, ChatMessage, Chunk, MessageRole},
-        model::Model, common::Error,
+        common::Error,
+        model::Model,
     },
 };
 use log::{debug, warn};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
+/// Given a chat conversation, the model will return a chat completion response.
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ChatCompletion {
@@ -150,9 +161,13 @@ impl ChatCompletion {
 
         let mut ret_val: Vec<Chunk> = vec![];
 
-        request_endpoint_stream(&self, &Endpoint::ChatCompletion_v1, |res| {
-            if let Ok(chunk_data_raw) = res {
-                chunk_data_raw.split("\n").for_each(|chunk_data| {
+        request_endpoint_stream(
+            &self,
+            &Endpoint::ChatCompletion_v1,
+            EndpointVariant::None,
+            |res| {
+                if let Ok(chunk_data_raw) = res {
+                    chunk_data_raw.split("\n").for_each(|chunk_data| {
                     let chunk_data = chunk_data.trim().to_string();
                     if &chunk_data == "data: [DONE]" {
                         debug!(target: "openai", "Last chunk received.");
@@ -181,8 +196,9 @@ impl ChatCompletion {
                         }
                     }
                 });
-            }
-        })
+                }
+            },
+        )
         .await?;
 
         Ok(ret_val)
@@ -202,7 +218,7 @@ impl ChatCompletion {
 
         let mut completion_response: Option<ChatCompletionResponse> = None;
 
-        request_endpoint(&self, &Endpoint::ChatCompletion_v1, |res| {
+        request_endpoint(&self, &Endpoint::ChatCompletion_v1, EndpointVariant::None, |res| {
             if let Ok(text) = res {
                 if let Ok(response_data) = serde_json::from_str::<ChatCompletionResponse>(&text) {
                     debug!(target: "openai", "Response parsed, completion response deserialized.");

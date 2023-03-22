@@ -21,6 +21,7 @@ pub struct Usage {
 pub struct Error {
     pub error: ErrorInfo,
 }
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ErrorInfo {
     pub message: String,
