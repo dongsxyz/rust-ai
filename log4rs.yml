@@ -1,0 +1,30 @@
+refresh_rate: 30 seconds
+
+appenders:
+  requests:
+    kind: file
+    path: "log/requests.log"
+    encoder:
+      pattern: "{d} {l} - {m}{n}"
+  openai_appender:
+    kind: file
+    path: "log/openai.log"
+    encoder:
+      pattern: "{d} {l} - {m}{n}"
+
+root:
+  level: warn
+  appenders:
+    - requests
+
+loggers:
+  requests:
+    level: debug
+    appenders:
+      - requests
+    additive: false
+  openai:
+    level: debug
+    appenders:
+      - openai_appender
+    additive: false
