@@ -14,3 +14,6 @@ pub mod edit;
 
 /// Image generation and manipulation
 pub mod image;
+
+/// Embedding and extraction
+pub mod embedding;

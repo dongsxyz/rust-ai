@@ -112,10 +112,16 @@ pub enum Model {
     /// | 8001 tokens | Up to Sep 2021 | GPT-3.5 |
     #[serde(rename = "code-davinci-edit-001")]
     CODE_DAVINCI_EDIT_001,
+
     #[serde(rename = "whisper-1")]
     WHISPER_1,
+
     #[serde(rename = "text-embedding-ada-002")]
     TEXT_EMBEDDING_ADA_002,
+    
+    #[serde(rename = "text-embedding-ada-002-v2")]
+    TEXT_EMBEDDING_ADA_002_v2,
+
     #[serde(rename = "text-search-ada-doc-001")]
     TEXT_SEARCH_ADA_DOC_001,
 

@@ -9,14 +9,17 @@ pub mod common;
 /// OpenAI models
 pub mod model;
 
-/// OpenAI Chat Completion
+/// OpenAI Chat Completions
 pub mod chat_completion;
 
-/// OpenAI Completion
+/// OpenAI Completions
 pub mod completion;
 
-/// OpenAI Edit
+/// OpenAI Edits
 pub mod edit;
 
-/// OpenAI Image
+/// OpenAI Images
 pub mod image;
+
+/// OpenAI Embeddings
+pub mod embedding;

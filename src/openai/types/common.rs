@@ -12,9 +12,14 @@ pub enum FinishReason {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Usage {
-    pub prompt_tokens: usize,
-    pub completion_tokens: usize,
-    pub total_tokens: usize,
+    #[serde(default)]
+    pub prompt_tokens: Option<usize>,
+
+    #[serde(default)]
+    pub completion_tokens: Option<usize>,
+
+    #[serde(default)]
+    pub total_tokens: Option<usize>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]

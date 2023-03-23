@@ -7,9 +7,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     std::env::set_var("RUST_BACKTRACE", "1");
     log4rs::init_file("log4rs.yml", Default::default()).unwrap();
 
-    let mut completion = Image::default();
-    completion.set_prompt("A giant swan.");
-    let result = completion.generation().await?;
+    let mut image = Image::default();
+    image.set_prompt("A giant swan.");
+    let result = image.generation().await?;
     println!("{}", result.data.get(0).unwrap().url.clone().unwrap());
     Ok(())
 }
