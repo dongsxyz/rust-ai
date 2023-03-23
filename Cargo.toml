@@ -2,7 +2,7 @@
 name = "rust-ai"
 authors = ["Zhongdong Yang"]
 description = "A collection of 3rd-party AI APIs for Rust"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/zhongdongy/rust-ai/"

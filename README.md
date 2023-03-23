@@ -23,6 +23,8 @@ Note: *Updated on March 23rd, 2023*.
 | Audios           | Translation    | `whisper-1`              | -      |
 | Moderation       | -              | `text-moderation-latest`[^note_2],<br> `text-moderation-stable` | -      |
 
+OpenAI's Fine Tunes endpoints are currently not supported.
+
 ## Usage
 
 Create a `config.yml` in your working directory, or root of this crate. Contents like this:
