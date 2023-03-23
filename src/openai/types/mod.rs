@@ -1,5 +1,8 @@
 //! 
-//! Collection of OpenAI APIs
+//! # Type collection of OpenAI APIs
+//! 
+//! You may find the `Model` struct mostly used. Types ending `*Response` are 
+//! wrapped return values from OpenAI endpoints.
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -1,3 +1,11 @@
+//! 
+//! # OpenAI's API endpoints
+//! 
+//! Note that for Audios and Images, an extended endpoint variant will be 
+//! needed.
+
+////////////////////////////////////////////////////////////////////////////////
+
 use std::fmt::Display;
 
 use log::{debug, error, warn};
@@ -58,8 +66,11 @@ pub fn endpoint_filter(model: &Model, endpoint: &Endpoint) -> bool {
     }
 }
 
+/// Enum for endpoints that have several variants.
 pub enum EndpointVariant {
+    /// No sub variants.
     None,
+    /// Denotes a variant of some endpoint.
     Extended(String),
 }
 
@@ -69,6 +80,7 @@ impl From<String> for EndpointVariant {
     }
 }
 
+/// API endpoint definition enum
 #[allow(non_camel_case_types)]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum Endpoint {
@@ -103,6 +115,7 @@ impl Into<&'static str> for Endpoint {
     }
 }
 
+/// Endpoint variants for Images
 #[allow(non_camel_case_types)]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ImageEndpointVariant {
@@ -121,6 +134,7 @@ impl Into<String> for ImageEndpointVariant {
     }
 }
 
+/// Endpoint variants for Audios
 #[allow(non_camel_case_types)]
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum AudioEndpointVariant {
@@ -137,6 +151,13 @@ impl Into<String> for AudioEndpointVariant {
     }
 }
 
+/// Send request to remote endpoint using JSON.
+///  
+/// # Arguments 
+/// - `json` - the serialized contents to send 
+/// - `endpoint` - Endpoint enum variant
+/// - `variant` - Endpoint variant enum
+/// - `cb` - callback function that will be called when message received.
 pub async fn request_endpoint<'a, T, F>(
     json: &'a T,
     endpoint: &'a Endpoint,
@@ -171,6 +192,15 @@ where
     Ok(())
 }
 
+
+/// Send request to remote endpoint using JSON but response will be streamed.
+///  
+/// # Arguments 
+/// - `json` - the serialized contents to send 
+/// - `endpoint` - Endpoint enum variant
+/// - `variant` - Endpoint variant enum
+/// - `cb` - callback function that will be called when message received. Note 
+/// the differences of the function parameters.
 pub async fn request_endpoint_stream<'a, T, F>(
     json: &'a T,
     endpoint: &'a Endpoint,
@@ -206,6 +236,14 @@ where
     Ok(())
 }
 
+
+/// Send request to remote endpoint using Form data.
+///  
+/// # Arguments 
+/// - `form` - the constructed HTTP form to send 
+/// - `endpoint` - Endpoint enum variant
+/// - `variant` - Endpoint variant enum
+/// - `cb` - callback function that will be called when message received.
 pub async fn request_endpoint_form_data<'a, F>(
     form: Form,
     endpoint: &'a Endpoint,

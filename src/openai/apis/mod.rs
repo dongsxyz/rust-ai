@@ -1,5 +1,11 @@
 //! 
-//! OpenAI capabilities
+//! # OpenAI capabilities
+//! 
+//! For text/code completion related tasks, OpenAI suggests to make use of 
+//! `gpt-3.5-turbo` model for a better performance at lower cost.
+//! 
+//! Image capabilites make use of DALL·E model and you may not be able to 
+//! control model selection.
 
 ////////////////////////////////////////////////////////////////////////////////
  
