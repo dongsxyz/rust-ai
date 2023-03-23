@@ -8,6 +8,10 @@ license = "Apache-2.0"
 repository = "https://github.com/zhongdongy/rust-ai/"
 homepage = "https://github.com/zhongdongy/rust-ai/"
 include = ["/src", "/log4rs.yml", "/examples"]
+readme = "README.md"
+documentation = "https://docs.rs/rust-ai"
+categories = ["text-processing", "api-bindings"]
+keywords = ["openai-api", "artificial-intelligence"]
 
 
 [lib]
