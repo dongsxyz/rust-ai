@@ -23,3 +23,6 @@ pub mod image;
 
 /// OpenAI Embeddings
 pub mod embedding;
+
+/// OpenAI Audios
+pub mod audio;

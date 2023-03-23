@@ -17,3 +17,6 @@ pub mod image;
 
 /// Embedding and extraction
 pub mod embedding;
+
+/// Audio transcription and translation
+pub mod audio;

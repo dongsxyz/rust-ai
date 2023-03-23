@@ -1,7 +1,7 @@
 use std::fmt::Display;
 
 use serde::Serialize;
-
+use reqwest::multipart::Form;
 use log::{debug, error, warn};
 
 use crate::utils::config::Config;
@@ -180,6 +180,40 @@ where
         } else {
             warn!(target: "openai", "Response chunk empty");
         }
+    }
+
+    Ok(())
+}
+
+
+
+pub async fn request_endpoint_form_data<'a, F>(
+    form: Form,
+    endpoint: &'a Endpoint,
+    variant: EndpointVariant,
+    mut cb: F,
+) -> Result<(), Box<dyn std::error::Error>>
+where
+    F: FnMut(Result<String, Box<dyn std::error::Error>>),
+{
+    let client = reqwest::Client::new();
+    let config = Config::load();
+    let url = if let EndpointVariant::Extended(var) = variant {
+        format!("https://api.openai.com{}{}", endpoint, var.to_owned())
+    } else {
+        format!("https://api.openai.com{}", endpoint)
+    };
+
+    let mut req = client.post(url);
+    req = req.header("Authorization", format!("Bearer {}", config.openai.api_key));
+    let res = req.multipart(form).send().await?;
+
+    if let Ok(text) = res.text().await {
+        debug!(target: "openai", "Received response from OpenAI: `{:?}`", text);
+        cb(Ok(text.clone()));
+    } else {
+        error!(target: "openai", "Error receiving response from OpenAI");
+        cb(Err("Error receiving response from OpenAI".into()))
     }
 
     Ok(())
