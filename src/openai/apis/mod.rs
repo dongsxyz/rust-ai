@@ -20,3 +20,6 @@ pub mod embedding;
 
 /// Audio transcription and translation
 pub mod audio;
+
+/// Moderation endpoint
+pub mod moderation;

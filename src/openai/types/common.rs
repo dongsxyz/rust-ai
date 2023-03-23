@@ -30,7 +30,11 @@ pub struct Error {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ErrorInfo {
     pub message: String,
+
     #[serde(rename = "type")]
     pub error_type: String,
+
     pub code: Option<u32>,
+    
+    pub param: Option<String>,
 }

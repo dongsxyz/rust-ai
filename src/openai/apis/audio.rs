@@ -7,7 +7,7 @@
 
 use crate::openai::{
     endpoint::{
-        request_endpoint_form_data, Endpoint, EndpointVariant,
+        request_endpoint_form_data, Endpoint, EndpointVariant, AudioEndpointVariant,
     },
     types::{
         audio::{AudioResponse, Format},
@@ -126,9 +126,11 @@ impl Audio {
             form = form.part("temperature", Part::text(temp));
         }
 
+        let variant: String = AudioEndpointVariant::Transcription.into();
+
         request_endpoint_form_data(
             form, 
-            &Endpoint::AudioTranscription_v1, EndpointVariant::None,
+            &Endpoint::Audio_v1, EndpointVariant::Extended(variant),
              |res| {
             if let Ok(text) = res {
                 if let Ok(response_data) = serde_json::from_str::<AudioResponse>(&text) {
@@ -136,8 +138,8 @@ impl Audio {
                     audio_response = Some(response_data);
                 } else {
                     if let Ok(response_error) = serde_json::from_str::<Error>(&text) {
-                        warn!(
-                            "OpenAI error code {}: {:?}",
+                        warn!(target: "openai",
+                            "OpenAI error code {}: `{:?}`",
                             response_error.error.code.unwrap_or(0),
                             text
                         );
@@ -193,9 +195,11 @@ impl Audio {
             form = form.part("temperature", Part::text(temp));
         }
 
+        let variant: String = AudioEndpointVariant::Transcription.into();
+
         request_endpoint_form_data(
             form, 
-            &Endpoint::AudioTranslation_v1, EndpointVariant::None,
+            &Endpoint::Audio_v1, EndpointVariant::Extended(variant),
              |res| {
             if let Ok(text) = res {
                 if let Ok(response_data) = serde_json::from_str::<AudioResponse>(&text) {
@@ -203,8 +207,8 @@ impl Audio {
                     audio_response = Some(response_data);
                 } else {
                     if let Ok(response_error) = serde_json::from_str::<Error>(&text) {
-                        warn!(
-                            "OpenAI error code {}: {:?}",
+                        warn!(target: "openai",
+                            "OpenAI error code {}: `{:?}`",
                             response_error.error.code.unwrap_or(0),
                             text
                         );

@@ -1,18 +1,16 @@
-use std::{error::Error, path::PathBuf};
+use std::error::Error;
 
-use rust_ai::openai::Audio;
+use rust_ai::openai::Moderation;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     std::env::set_var("RUST_LOG", "debug");
     std::env::set_var("RUST_BACKTRACE", "1");
     log4rs::init_file("log4rs.yml", Default::default()).unwrap();
 
-    let audio = Audio::default();
-    let mut file_path = PathBuf::from("D:\\Contents\\Downloads");
-    file_path = file_path.join("20220918_000937.m4a");
-    let result = audio
-        .translation(String::from("input.m4a"), std::fs::read(file_path).unwrap())
-        .await?;
-    println!("{:?}", result.text);
+    let mut moderation = Moderation::default();
+    moderation.add_input("I'm so stupid. I wanna kill myself.");
+    moderation.model = rust_ai::openai::types::model::Model::TEXT_MODERATION_004;
+    let result = moderation.moderate().await?;
+    println!("{:?}", result);
     Ok(())
 }

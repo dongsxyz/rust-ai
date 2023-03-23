@@ -1,7 +1,7 @@
-//! 
-//! Given a prompt and an instruction, the model will return an edited version 
+//!
+//! Given a prompt and an instruction, the model will return an edited version
 //! of the prompt.
-//! 
+//!
 //! Source: OpenAI documentation
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ impl Edit {
     pub fn set_input(&mut self, content: &str) {
         self.input = Some(content.into());
     }
-    
+
     /// Set target instruction.
     ///
     /// # Arguments
@@ -97,8 +97,8 @@ impl Edit {
                     edit_response = Some(response_data);
                 } else {
                     if let Ok(response_error) = serde_json::from_str::<Error>(&text) {
-                        warn!(
-                            "OpenAI error code {}: {:?}",
+                        warn!(target: "openai",
+                            "OpenAI error code {}: `{:?}`",
                             response_error.error.code.unwrap_or(0),
                             text
                         );

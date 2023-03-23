@@ -185,8 +185,8 @@ impl ChatCompletion {
                             if let Ok(response_error) =
                                 serde_json::from_str::<Error>(&stripped_chunk)
                             {
-                                warn!(
-                                    "OpenAI error code {}: {:?}",
+                                warn!(target: "openai",
+                                    "OpenAI error code {}: `{:?}`",
                                     response_error.error.code.unwrap_or(0),
                                     stripped_chunk
                                 );
@@ -225,8 +225,8 @@ impl ChatCompletion {
                     completion_response = Some(response_data);
                 } else {
                     if let Ok(response_error) = serde_json::from_str::<Error>(&text) {
-                        warn!(
-                            "OpenAI error code {}: {:?}",
+                        warn!(target: "openai",
+                            "OpenAI error code {}: `{:?}`",
                             response_error.error.code.unwrap_or(0),
                             text
                         );

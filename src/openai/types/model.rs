@@ -149,6 +149,14 @@ pub enum Model {
     /// Series: Moderation
     #[serde(rename = "text-moderation-latest")]
     TEXT_MODERATION_LATEST,
+    #[serde(rename = "text-moderation-004")]
+    TEXT_MODERATION_004,
+    #[serde(rename = "text-moderation-003")]
+    TEXT_MODERATION_003,
+    #[serde(rename = "text-moderation-002")]
+    TEXT_MODERATION_002,
+    #[serde(rename = "text-moderation-001")]
+    TEXT_MODERATION_001,
 
     /// Almost as capable as the latest model, but slightly older.
     ///
@@ -213,6 +221,9 @@ pub enum Model {
     /// | 2049 tokens | Up to Oct 2019 | GPT-3  |
     #[serde(rename = "ada")]
     ADA,
+
+    #[serde(other)]
+    UNKNOWN,
 }
 
 impl Into<&'static str> for Model {
@@ -243,6 +254,11 @@ impl Into<&'static str> for Model {
             Model::CURIE => "curie",
             Model::BABBAGE => "babbage",
             Model::ADA => "ada",
+            Model::TEXT_MODERATION_001 => "text-moderation-001",
+            Model::TEXT_MODERATION_002 => "text-moderation-002",
+            Model::TEXT_MODERATION_003 => "text-moderation-003",
+            Model::TEXT_MODERATION_004 => "text-moderation-004",
+            Model::UNKNOWN => "unknown",
         }
     }
 }

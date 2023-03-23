@@ -26,3 +26,6 @@ pub mod embedding;
 
 /// OpenAI Audios
 pub mod audio;
+
+/// OpenAI Moderations
+pub mod moderation;

@@ -8,3 +8,4 @@ pub use apis::edit::Edit;
 pub use apis::image::Image;
 pub use apis::embedding::Embedding;
 pub use apis::audio::Audio;
+pub use apis::moderation::Moderation;

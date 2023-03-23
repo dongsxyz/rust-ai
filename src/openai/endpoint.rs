@@ -1,8 +1,8 @@
 use std::fmt::Display;
 
-use serde::Serialize;
-use reqwest::multipart::Form;
 use log::{debug, error, warn};
+use reqwest::multipart::Form;
+use serde::Serialize;
 
 use crate::utils::config::Config;
 
@@ -39,14 +39,19 @@ pub fn endpoint_filter(model: &Model, endpoint: &Endpoint) -> bool {
         Endpoint::Edit_v1 => {
             [Model::TEXT_DAVINCI_EDIT_001, Model::CODE_DAVINCI_EDIT_001].contains(&model)
         }
-        Endpoint::AudioTranscription_v1 => [Model::WHISPER_1].contains(&model),
-        Endpoint::AudioTranslation_v1 => [Model::WHISPER_1].contains(&model),
+        Endpoint::Audio_v1 => [Model::WHISPER_1].contains(&model),
         Endpoint::FineTune_v1 => {
             [Model::DAVINCI, Model::CURIE, Model::BABBAGE, Model::ADA].contains(&model)
         }
         Endpoint::Embedding_v1 => [
             Model::TEXT_EMBEDDING_ADA_002,
             Model::TEXT_SEARCH_ADA_DOC_001,
+        ]
+        .contains(&model),
+        Endpoint::Moderation_v1 => [
+            Model::TEXT_MODERATION_LATEST,
+            Model::TEXT_MODERATION_STABLE,
+            Model::TEXT_MODERATION_004,
         ]
         .contains(&model),
         _ => false,
@@ -71,10 +76,10 @@ pub enum Endpoint {
     Completion_v1,
     Edit_v1,
     Image_v1,
-    AudioTranscription_v1,
-    AudioTranslation_v1,
+    Audio_v1,
     FineTune_v1,
     Embedding_v1,
+    Moderation_v1,
 }
 
 impl Display for Endpoint {
@@ -86,14 +91,14 @@ impl Display for Endpoint {
 impl Into<&'static str> for Endpoint {
     fn into(self) -> &'static str {
         match self {
-            Self::AudioTranscription_v1 => "/v1/audio/transcriptions",
-            Self::AudioTranslation_v1 => "/v1/audio/translations",
+            Self::Audio_v1 => "/v1/audio",
             Self::ChatCompletion_v1 => "/v1/chat/completions",
             Self::Completion_v1 => "/v1/completions",
             Self::Edit_v1 => "/v1/edits",
             Self::Image_v1 => "/v1/images",
             Self::Embedding_v1 => "/v1/embeddings",
             Self::FineTune_v1 => "/v1/fine-tunes",
+            Self::Moderation_v1 => "/v1/moderations",
         }
     }
 }
@@ -112,6 +117,22 @@ impl Into<String> for ImageEndpointVariant {
             Self::Editing => "/edits",
             Self::Variation => "/variations",
             Self::Generation => "/generations",
+        })
+    }
+}
+
+#[allow(non_camel_case_types)]
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub enum AudioEndpointVariant {
+    Transcription,
+    Translation,
+}
+
+impl Into<String> for AudioEndpointVariant {
+    fn into(self) -> String {
+        String::from(match self {
+            Self::Transcription => "/transcriptions",
+            Self::Translation => "/translations",
         })
     }
 }
@@ -184,8 +205,6 @@ where
 
     Ok(())
 }
-
-
 
 pub async fn request_endpoint_form_data<'a, F>(
     form: Form,
