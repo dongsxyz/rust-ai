@@ -110,7 +110,7 @@ impl Into<String> for ImageEndpointVariant {
     fn into(self) -> String {
         String::from(match self {
             Self::Editing => "/edits",
-            Self::Variation => "/variantions",
+            Self::Variation => "/variations",
             Self::Generation => "/generations",
         })
     }
