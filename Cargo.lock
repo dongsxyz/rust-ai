@@ -903,6 +903,7 @@ name = "rust-ai"
 version = "0.1.4"
 dependencies = [
  "isolang",
+ "lazy_static",
  "log",
  "log4rs",
  "reqwest",

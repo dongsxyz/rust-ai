@@ -11,6 +11,11 @@ appenders:
     path: "log/openai.log"
     encoder:
       pattern: "{d} {l} - {m}{n}"
+  azure_appender:
+    kind: file
+    path: "log/azure.log"
+    encoder:
+      pattern: "{d} {l} - {m}{n}"
 
 root:
   level: warn
@@ -27,4 +32,9 @@ loggers:
     level: debug
     appenders:
       - openai_appender
+    additive: false
+  azure:
+    level: debug
+    appenders:
+      - azure_appender
     additive: false

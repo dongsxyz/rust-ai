@@ -169,7 +169,7 @@ where
     F: FnMut(Result<String, Box<dyn std::error::Error>>),
 {
     let client = reqwest::Client::new();
-    let config = Config::load();
+    let config = Config::load().unwrap();
     let url = if let EndpointVariant::Extended(var) = variant {
         format!("https://api.openai.com{}{}", endpoint, var.to_owned())
     } else {
@@ -212,7 +212,7 @@ where
     F: FnMut(Result<String, Box<dyn std::error::Error>>),
 {
     let client = reqwest::Client::new();
-    let config = Config::load();
+    let config = Config::load().unwrap();
     let url = if let EndpointVariant::Extended(var) = variant {
         format!("https://api.openai.com{}{}", endpoint, var.to_owned())
     } else {
@@ -254,7 +254,7 @@ where
     F: FnMut(Result<String, Box<dyn std::error::Error>>),
 {
     let client = reqwest::Client::new();
-    let config = Config::load();
+    let config = Config::load().unwrap();
     let url = if let EndpointVariant::Extended(var) = variant {
         format!("https://api.openai.com{}{}", endpoint, var.to_owned())
     } else {

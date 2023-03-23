@@ -43,5 +43,8 @@
 /// OpenAI endpoint collection
 pub mod openai;
 
+/// Azure endpoint collection
+pub mod azure;
+
 /// Support functions
 pub mod utils;
