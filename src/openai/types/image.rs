@@ -24,6 +24,17 @@ pub enum Size {
     #[serde(rename = "1024x1024")]
     SIZE_1024,
 }
+
+impl Into<&'static str> for Size {
+    fn into(self) -> &'static str {
+        match self {
+            Self::SIZE_256 => "256x256",
+            Self::SIZE_512 => "512x512",
+            Self::SIZE_1024 => "1024x1024",
+        }
+    }
+}
+
 #[allow(non_camel_case_types)]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Format {
@@ -31,4 +42,13 @@ pub enum Format {
     Url,
     #[serde(rename = "b64_json")]
     B64_JSON,
+}
+
+impl Into<&'static str> for Format {
+    fn into(self) -> &'static str {
+        match self {
+            Self::B64_JSON => "b64_json",
+            Self::Url => "url",
+        }
+    }
 }

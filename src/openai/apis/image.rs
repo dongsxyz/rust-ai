@@ -1,20 +1,24 @@
-//! 
+//!
 //! Given a prompt and/or an input image, the model will generate a new image.
-//! 
+//!
 //! Related guide: Image generation
-//! 
+//!
 //! Source: OpenAI documentation
 
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::openai::{
-    endpoint::{request_endpoint, Endpoint, EndpointVariant, ImageEndpointVariant},
+    endpoint::{
+        request_endpoint, request_endpoint_form_data, Endpoint, EndpointVariant,
+        ImageEndpointVariant,
+    },
     types::{
         common::Error,
         image::{Format, ImageResponse, Size},
     },
 };
 use log::{debug, warn};
+use reqwest::multipart::{Form, Part};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
@@ -26,14 +30,14 @@ pub struct Image {
     /// The image to edit. Must be a valid PNG file, less than 4MB, and square.
     ///  If mask is not provided, image must have transparency, which will be
     /// used as the mask.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub image: Option<String>,
+    #[serde(skip)]
+    pub image: Option<(String, Vec<u8>)>,
 
     /// An additional image whose fully transparent areas (e.g. where alpha is
     /// zero) indicate where `image` should be edited. Must be a valid PNG
     /// file, less than 4MB, and have the same dimensions as `image`.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub mask: Option<String>,
+    #[serde(skip)]
+    pub mask: Option<(String, Vec<u8>)>,
 
     /// A text description of the desired image(s). The maximum length is 1000
     /// characters.
@@ -75,20 +79,35 @@ impl Default for Image {
 }
 
 impl Image {
+    /// Determine and verify MIME type of input file.
+    ///
+    /// # Arguments
+    /// - `file_name` - Name of the input file
+    fn mime(&self, file_name: &str) -> Result<&'static str, Box<dyn std::error::Error>> {
+        Ok(
+            match *file_name.split('.').collect::<Vec<&str>>().last().unwrap() {
+                "png" => "image/png",
+                _ => return Err("Unsupported format!".into()),
+            },
+        )
+    }
+
     /// Set target image.
     ///
     /// # Arguments
-    /// - `image` - Image to edit or create variant
-    pub fn set_image(&mut self, image: &str) {
-        self.image = Some(image.into());
+    /// - `filename` - Image filename to edit or create variant
+    /// - `bytes` - Image bytes to edit or create variant
+    pub fn set_image(&mut self, filename: &str, bytes: Vec<u8>) {
+        self.image = Some((filename.into(), bytes.clone()));
     }
 
     /// Set target image mask.
     ///
     /// # Arguments
-    /// - `mask` - Image to edit or create variant
-    pub fn set_image_mask(&mut self, mask: &str) {
-        self.mask = Some(mask.into());
+    /// - `filename` - Image filename to use as a mask
+    /// - `bytes` - Image bytes to use as a mask
+    pub fn set_image_mask(&mut self, filename: &str, bytes: Vec<u8>) {
+        self.mask = Some((filename.into(), bytes.clone()));
     }
 
     /// Set target prompt for image generations.
@@ -110,8 +129,49 @@ impl Image {
 
         let mut image_response: Option<ImageResponse> = None;
 
+        let mut form = Form::new();
+
+        if let Some(image_tup) = self.image.as_ref() {
+            let image = Part::bytes(image_tup.1.clone())
+                .file_name(image_tup.0.clone())
+                .mime_str(self.mime(&image_tup.0).unwrap())
+                .unwrap();
+            form = form.part("image", image);
+        }
+
+        if let Some(mask_tup) = self.mask.as_ref() {
+            let mask = Part::bytes(mask_tup.1.clone())
+                .file_name(mask_tup.0.clone())
+                .mime_str(self.mime(&mask_tup.0).unwrap())
+                .unwrap();
+            form = form.part("mask", mask);
+        }
+
+        if let Some(prompt) = self.prompt.clone() {
+            form = form.part("prompt", Part::text(prompt));
+        }
+
+        
+        if let Some(n) = self.n.clone() {
+            form = form.part("n", Part::text(n.to_string()));
+        }
+        
+        if let Some(size) = self.size.clone() {
+            let size: &str = size.into();
+            form = form.part("size", Part::text(size));
+        }
+
+        if let Some(fmt) = self.response_format.clone() {
+            let fmt: &str = fmt.into();
+            form = form.part("response_format", Part::text(fmt));
+        }
+        
+        if let Some(user) = self.user.clone() {
+            form = form.part("user", Part::text(user));
+        }
+
         let variant: String = ImageEndpointVariant::Editing.into();
-        request_endpoint(&self, &Endpoint::Image_v1, EndpointVariant::from(variant), |res| {
+        request_endpoint_form_data(form, &Endpoint::Image_v1, EndpointVariant::from(variant), |res| {
             if let Ok(text) = res {
                 if let Ok(response_data) = serde_json::from_str::<ImageResponse>(&text) {
                     debug!(target: "openai", "Response parsed, image edit response deserialized.");
@@ -187,8 +247,39 @@ impl Image {
 
         let mut image_response: Option<ImageResponse> = None;
 
+
+        let mut form = Form::new();
+
+        if let Some(image_tup) = self.image.as_ref() {
+            let image = Part::bytes(image_tup.1.clone())
+                .file_name(image_tup.0.clone())
+                .mime_str(self.mime(&image_tup.0).unwrap())
+                .unwrap();
+            form = form.part("image", image);
+        }
+
+        if let Some(n) = self.n.clone() {
+            form = form.part("n", Part::text(n.to_string()));
+        }
+        
+        if let Some(size) = self.size.clone() {
+            let size: &str = size.into();
+            form = form.part("size", Part::text(size));
+        }
+
+        if let Some(fmt) = self.response_format.clone() {
+            let fmt: &str = fmt.into();
+            form = form.part("response_format", Part::text(fmt));
+        }
+
+        
+        if let Some(user) = self.user.clone() {
+            form = form.part("user", Part::text(user));
+        }
+
         let variant: String = ImageEndpointVariant::Variation.into();
-        request_endpoint(&self, &Endpoint::Image_v1, EndpointVariant::from(variant), |res| {
+        
+        request_endpoint_form_data(form, &Endpoint::Image_v1, EndpointVariant::from(variant), |res| {
             if let Ok(text) = res {
                 if let Ok(response_data) = serde_json::from_str::<ImageResponse>(&text) {
                     debug!(target: "openai", "Response parsed, image variation response deserialized.");
