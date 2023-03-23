@@ -8,14 +8,19 @@ Provide a collection of third-party APIs that give public access to AI capabilit
 
 ### OpenAI
 
-Note: *Updated on March 22nd, 2023*.
+Note: *Updated on March 23rd, 2023*.
 
-| Category         | Variant     | Tested Models           | Stream |
-| :--------------- | :---------- | :--                     | :----: |
-| Chat completions | -           | `gpt-3.5-turbo`         | yes    |
-| Completions      | -           | `text-davinci-003`      | yes    |
-| Edits            | -           | `text-davinci-edit-001` | -      |
-| Images           | Generations | -                       | -      |
+| Category         | Variant        | Tested Models            | Stream |
+| :--------------- | :------------- | :----------------------- | :----: |
+| Chat completions | -              | `gpt-3.5-turbo`          | yes    |
+| Completions      | -              | `text-davinci-003`       | yes    |
+| Edits            | -              | `text-davinci-edit-001`  | -      |
+| Images           | Generations    | -                        | -      |
+| Images           | Edits          | -                        | -      |
+| Images           | Variations     | -                        | -      |
+| Embeddings       | -              | `text-embedding-ada-002` | -      |
+| Audios           | Transcriptions | -                        | -      |
+| Audios           | Translation    | -                        | -      |
 
 ## Usage
 
