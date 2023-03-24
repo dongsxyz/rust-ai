@@ -2,7 +2,7 @@
 name = "rust-ai-generator"
 authors = ["Zhongdong Yang"]
 description = "A tool to generate types for `rust-ai`"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/zhongdongy/rust-ai/"
@@ -14,7 +14,7 @@ readme = "README.md"
 
 [dependencies]
 chrono = "0.4.24"
-rust-ai = { path = "../rust-ai", version = "0.1.5" }
+rust-ai = { path = "../rust-ai", version = "0.1.6" }
 tokio = { version = "1.26.0", features = ["full"] }
 
 [[bin]]

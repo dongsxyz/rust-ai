@@ -4,6 +4,17 @@
 //! Provide configuration related types and functions/methods.
 //!
 //! Note: `config.yml` must locate in your current working directory.
+//! 
+//! ## Example
+//! 
+//! ```yaml
+//! openai:
+//!   api_key: sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+//! azure:
+//!   speech:
+//!     key: 4c7eXXXXXXXXXXXXXXXXXXXXXXX54c32
+//!     region: westus
+//! ```
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +30,10 @@ use serde_yaml;
 /// ```yaml
 /// openai:
 ///   api_key: sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+/// azure:
+///   speech:
+///     key: 4c7eXXXXXXXXXXXXXXXXXXXXXXX54c32
+///     region: westus
 /// ```
 ///
 /// # Examples

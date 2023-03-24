@@ -1,3 +1,33 @@
+//! 
+//! Selection of AI Voice Names:
+//! 
+//! (This is not a comprehensive list. You may find all available endpoints fetched from WestUS region in [`VoiceName`][crate::azure::VoiceName])
+//! 
+//! - [`VoiceName::yue_CN_YunSongNeural`][crate::azure::VoiceName::yue_CN_YunSongNeural]: A 25-year-old young man's voice (deeper than Yunfeng).
+//! - [`VoiceName::yue_CN_XiaoMinNeural`][crate::azure::VoiceName::yue_CN_XiaoMinNeural]: Sounds like a 20-year-old young lady's voice.
+//! - [`VoiceName::zh_CN_YunfengNeural`][crate::azure::VoiceName::zh_CN_YunfengNeural]: A 22-25 years' young man's voice.
+//! - [`VoiceName::zh_CN_YunhaoNeural`][crate::azure::VoiceName::zh_CN_YunhaoNeural]: A 25-year-old young man's voice (deeper than Yunfeng).
+//! - [`VoiceName::zh_CN_YunjianNeural`][crate::azure::VoiceName::zh_CN_YunjianNeural]: A 30 to 35-year-old man's voice (deeper and powerful).
+//! - [`VoiceName::zh_CN_YunxiNeural`][crate::azure::VoiceName::zh_CN_YunxiNeural]: A 14 to 17-year-old boy student's voice.
+//! - [`VoiceName::zh_CN_YunxiaNeural`][crate::azure::VoiceName::zh_CN_YunxiaNeural]: A 10-year-old boy's voice.
+//! - [`VoiceName::zh_CN_YunyangNeural`][crate::azure::VoiceName::zh_CN_YunyangNeural]: A 35-year-old man's voice (announcer like).
+//! - [`VoiceName::zh_CN_YunyeNeural`][crate::azure::VoiceName::zh_CN_YunyeNeural]: A 35 to 40-year-old man's voice (documentary voice actor like).
+//! - [`VoiceName::zh_CN_YunzeNeural`][crate::azure::VoiceName::zh_CN_YunzeNeural]: A 45 to 50-year-old man's voice (kind and deep voice).
+//! - [`VoiceName::zh_CN_XiaochenNeural`][crate::azure::VoiceName::zh_CN_XiaochenNeural]: Sounds like a 19-year-old college girl.
+//! - [`VoiceName::zh_CN_XiaohanNeural`][crate::azure::VoiceName::zh_CN_XiaohanNeural]: Sounds like a 27-year-old young woman.
+//! - [`VoiceName::zh_CN_XiaomengNeural`][crate::azure::VoiceName::zh_CN_XiaomengNeural]: Sounds like a 23-year-old young lady.
+//! - [`VoiceName::zh_CN_XiaomoNeural`][crate::azure::VoiceName::zh_CN_XiaomoNeural]: Sounds like a 25-year-old young lady with intellectual voice.
+//! - [`VoiceName::zh_CN_XiaoqiuNeural`][crate::azure::VoiceName::zh_CN_XiaoqiuNeural]: Sounds like a 35 to 40-year-old female's voice (announcer like).
+//! - [`VoiceName::zh_CN_XiaoruiNeural`][crate::azure::VoiceName::zh_CN_XiaoruiNeural]: Sounds like a 50-year-old female's voice (kind and slow).
+//! - [`VoiceName::zh_CN_XiaoshuangNeural`][crate::azure::VoiceName::zh_CN_XiaoshuangNeural]: Sounds like a 10-year-old little girl.
+//! - [`VoiceName::zh_CN_XiaoxiaoNeural`][crate::azure::VoiceName::zh_CN_XiaoxiaoNeural]: Sounds like a 20-year-old young lady with sweet voice.
+//! - [`VoiceName::zh_CN_XiaoxuanNeural`][crate::azure::VoiceName::zh_CN_XiaoxuanNeural]: Sounds like a 27-year-old young woman with cold voice.
+//! - [`VoiceName::zh_CN_XiaoyanNeural`][crate::azure::VoiceName::zh_CN_XiaoyanNeural]: Sounds like a 30-year-old woman's voice (normal).
+//! - [`VoiceName::zh_CN_XiaoyiNeural`][crate::azure::VoiceName::zh_CN_XiaoyiNeural]: Sounds like a 19-year-old college girl's voice.
+//! - [`VoiceName::zh_CN_XiaoyouNeural`][crate::azure::VoiceName::zh_CN_XiaoyouNeural]: Sounds like a 7-year-old little girl's voice (cute and sweet).
+//! - [`VoiceName::zh_CN_XiaozhenNeural`][crate::azure::VoiceName::zh_CN_XiaozhenNeural]: Sounds like a 22-year-old young lady's voice (full of careness).
+
+
 use log::warn;
 use reqwest::header::HeaderMap;
 

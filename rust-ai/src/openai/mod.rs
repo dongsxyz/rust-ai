@@ -10,13 +10,13 @@
 //! README.md for instance.
 //! 
 //! These types are re-exported from submodules:
-//! - `Audio`: audio transcriptions and translations;
-//! - `ChatCompletion`: ChatGPT like capabilities for text/code completion;
-//! - `Completion`: GPT-3 based text/code completion;
-//! - `Edit`: text content manipulation;
-//! - `Embedding`: Ada based embedding extraction;
-//! - `Moderation`: content violation detection;
-//! - `Model`: an enum represents all available OpenAI public models.
+//! - [`Audio`][crate::openai::Audio]: audio transcriptions and translations;
+//! - [`ChatCompletion`][crate::openai::ChatCompletion]: ChatGPT like capabilities for text/code completion;
+//! - [`Completion`][crate::openai::Completion]: GPT-3 based text/code completion;
+//! - [`Edit`][crate::openai::Edit]: text content manipulation;
+//! - [`Embedding`][crate::openai::Embedding]: Ada based embedding extraction;
+//! - [`Moderation`][crate::openai::Moderation]: content violation detection;
+//! - [`Model`][crate::openai::Model]: an enum represents all available OpenAI public models.
 //! 
 //! ## Support List
 //! 

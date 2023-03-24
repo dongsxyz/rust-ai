@@ -20,6 +20,7 @@ pub mod apis;
 pub mod types;
 
 pub use apis::speech::Speech;
+pub use types::MicrosoftOutputFormat;
 pub use types::Gender;
 pub use types::Locale;
 pub use types::VoiceName;

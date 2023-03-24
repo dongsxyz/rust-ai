@@ -7,3 +7,4 @@ pub use locale::Locale;
 pub use voice_name::VoiceName;
 pub use common::Gender;
 pub use common::SSML;
+pub use common::MicrosoftOutputFormat;
