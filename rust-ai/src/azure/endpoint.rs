@@ -1,5 +1,5 @@
 use log::{debug, error};
-use reqwest::Client;
+use reqwest::{header::HeaderMap, Client};
 use serde::{Deserialize, Serialize};
 
 use crate::utils::config::Config;
@@ -56,6 +56,7 @@ pub async fn request_post_endpoint_ssml<T>(
     endpoint: &SpeechServiceEndpoint,
     ssml: T,
     expect: ResponseExpectation,
+    extra_headers: HeaderMap,
 ) -> Result<ResponseType, Box<dyn std::error::Error>>
 where
     T: SSML,
@@ -66,11 +67,13 @@ where
     let url = endpoint.build(&region);
 
     let client = Client::new();
-    let mut req = client.post(url);
-    req = req.header("Ocp-Apim-Subscription-Key", config.azure.speech.key);
-    req = req.header("User-Agent", "rust-ai/example");
-    req = req.header("Content-Type", "application/ssml+xml");
-    req = req.header("X-Microsoft-OutputFormat", "ogg-24khz-16bit-mono-opus");
+    let mut req = client
+        .post(url)
+        .header("Ocp-Apim-Subscription-Key", config.azure.speech.key)
+        .header("User-Agent", "rust-ai/example")
+        .header("Content-Type", "application/ssml+xml")
+        .headers(extra_headers);
+
     let body = Into::<String>::into(ssml);
     req = req.body(body.clone());
     debug!(target: "azure", "Request body: {:?}", body);
