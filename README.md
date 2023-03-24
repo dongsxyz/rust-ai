@@ -24,3 +24,5 @@ Examples located at `examples` directory, available targets:
   - `openai-image-edit`
   - `openai-image-generation`
   - `openai-image-variant`
+- Azure:
+  - `azure-text-to-speech`
