@@ -925,8 +925,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust-ai-bootstrap"
-version = "0.1.0"
+name = "rust-ai-generator"
+version = "0.1.5"
 dependencies = [
  "chrono",
  "rust-ai",
