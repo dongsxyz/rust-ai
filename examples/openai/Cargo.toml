@@ -1,0 +1,55 @@
+[package]
+name = "rust-ai-openai-examples"
+edition = "2021"
+version = "0.1.0"
+
+[dependencies]
+rust-ai = { path = "../../rust-ai" }
+tokio = { version = "1.26.0", features = ["full"] }
+log = "0.4.17"
+log4rs = "1.2.0"
+
+[[bin]]
+name = "openai-audio-transcription"
+path = "src/audio-transcription.rs"
+
+[[bin]]
+name = "openai-audio-translation"
+path = "src/audio-translation.rs"
+
+[[bin]]
+name = "openai-chat-completion-streamed"
+path = "src/chat-completion-streamed.rs"
+
+[[bin]]
+name = "openai-chat-completion"
+path = "src/chat-completion.rs"
+
+[[bin]]
+name = "openai-completion-streamed"
+path = "src/completion-streamed.rs"
+
+[[bin]]
+name = "openai-completion"
+path = "src/completion.rs"
+
+[[bin]]
+name = "openai-edit-code"
+path = "src/edit-code.rs"
+
+[[bin]]
+name = "openai-embedding"
+path = "src/embedding.rs"
+
+[[bin]]
+name = "openai-image-edit"
+path = "src/image-edit.rs"
+
+[[bin]]
+name = "openai-image-generation"
+path = "src/image-generation.rs"
+
+[[bin]]
+name = "openai-image-variant"
+path = "src/image-variant.rs"
+

@@ -900,7 +900,7 @@ dependencies = [
 
 [[package]]
 name = "rust-ai"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "isolang",
  "lazy_static",
@@ -911,6 +911,35 @@ dependencies = [
  "serde_json",
  "serde_with",
  "serde_yaml 0.9.19",
+ "tokio",
+]
+
+[[package]]
+name = "rust-ai-azure-bootstrap"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "rust-ai",
+ "tokio",
+]
+
+[[package]]
+name = "rust-ai-azure-examples"
+version = "0.1.0"
+dependencies = [
+ "log",
+ "log4rs",
+ "rust-ai",
+ "tokio",
+]
+
+[[package]]
+name = "rust-ai-openai-examples"
+version = "0.1.0"
+dependencies = [
+ "log",
+ "log4rs",
+ "rust-ai",
  "tokio",
 ]
 
