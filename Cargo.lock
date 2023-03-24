@@ -915,20 +915,20 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust-ai-azure-bootstrap"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "rust-ai",
- "tokio",
-]
-
-[[package]]
 name = "rust-ai-azure-examples"
 version = "0.1.0"
 dependencies = [
  "log",
  "log4rs",
+ "rust-ai",
+ "tokio",
+]
+
+[[package]]
+name = "rust-ai-bootstrap"
+version = "0.1.0"
+dependencies = [
+ "chrono",
  "rust-ai",
  "tokio",
 ]

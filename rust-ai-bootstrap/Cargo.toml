@@ -1,0 +1,22 @@
+[package]
+name = "rust-ai-bootstrap"
+authors = ["Zhongdong Yang"]
+description = "A tool to generate types for `rust-ai`"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+repository = "https://github.com/zhongdongy/rust-ai/"
+homepage = "https://github.com/zhongdongy/rust-ai/"
+include = ["/src"]
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4.24"
+rust-ai = { path = "../rust-ai", version = "0.1.*" }
+tokio = { version = "1.26.0", features = ["full"] }
+
+[[bin]]
+name = "rsai-bootstrap"
+path = "src/main.rs"

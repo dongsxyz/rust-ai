@@ -1,6 +1,6 @@
 [workspace]
 members = [
-  "rust-ai-azure-bootstrap", 
+  "rust-ai-bootstrap", 
   "rust-ai", 
   "examples/*"
   ]
