@@ -4,7 +4,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::utils::config::Config;
 
-use super::types::common::{ResponseExpectation, ResponseType, SSML};
+use super::{
+    types::common::{ResponseExpectation, ResponseType},
+    SSML,
+};
 
 #[allow(non_camel_case_types)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -52,15 +55,12 @@ pub async fn request_get_endpoint(
     }
 }
 
-pub async fn request_post_endpoint_ssml<T>(
+pub async fn request_post_endpoint_ssml(
     endpoint: &SpeechServiceEndpoint,
-    ssml: T,
+    ssml: SSML,
     expect: ResponseExpectation,
     extra_headers: HeaderMap,
-) -> Result<ResponseType, Box<dyn std::error::Error>>
-where
-    T: SSML,
-{
+) -> Result<ResponseType, Box<dyn std::error::Error>> {
     let config = Config::load().unwrap();
     let region = config.azure.speech.region;
 
@@ -74,7 +74,7 @@ where
         .header("Content-Type", "application/ssml+xml")
         .headers(extra_headers);
 
-    let body = Into::<String>::into(ssml);
+    let body = ssml.to_string();
     req = req.body(body.clone());
     debug!(target: "azure", "Request body: {:?}", body);
 

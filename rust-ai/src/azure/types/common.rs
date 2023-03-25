@@ -1,7 +1,5 @@
 use reqwest::header::HeaderValue;
 
-pub trait SSML: Into<String> {}
-
 /// Available gender variants implemented for Azure.
 #[derive(Debug, Clone)]
 pub enum Gender {

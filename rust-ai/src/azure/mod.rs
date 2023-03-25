@@ -25,3 +25,4 @@ pub use types::Gender;
 pub use types::Locale;
 pub use types::VoiceName;
 pub use types::SSML;
+pub use types::ssml;

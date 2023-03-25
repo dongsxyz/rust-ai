@@ -1,8 +1,8 @@
-//! 
+//!
 //! Selection of AI Voice Names:
-//! 
+//!
 //! (This is not a comprehensive list. You may find all available endpoints fetched from WestUS region in [`VoiceName`][crate::azure::VoiceName])
-//! 
+//!
 //! - [`VoiceName::yue_CN_YunSongNeural`][crate::azure::VoiceName::yue_CN_YunSongNeural]: A 25-year-old young man's voice (deeper than Yunfeng).
 //! - [`VoiceName::yue_CN_XiaoMinNeural`][crate::azure::VoiceName::yue_CN_XiaoMinNeural]: Sounds like a 20-year-old young lady's voice.
 //! - [`VoiceName::zh_CN_YunfengNeural`][crate::azure::VoiceName::zh_CN_YunfengNeural]: A 22-25 years' young man's voice.
@@ -26,7 +26,8 @@
 //! - [`VoiceName::zh_CN_XiaoyiNeural`][crate::azure::VoiceName::zh_CN_XiaoyiNeural]: Sounds like a 19-year-old college girl's voice.
 //! - [`VoiceName::zh_CN_XiaoyouNeural`][crate::azure::VoiceName::zh_CN_XiaoyouNeural]: Sounds like a 7-year-old little girl's voice (cute and sweet).
 //! - [`VoiceName::zh_CN_XiaozhenNeural`][crate::azure::VoiceName::zh_CN_XiaozhenNeural]: Sounds like a 22-year-old young lady's voice (full of careness).
-
+//!
+//! For use of styles and roles, see [docs/azure-voices-n-roles.md](https://github.com/dongsxyz/rust-ai/blob/master/docs/azure-voices-n-roles.md).
 
 use log::warn;
 use reqwest::header::HeaderMap;
@@ -35,8 +36,8 @@ use crate::azure::{
     endpoint::{request_get_endpoint, request_post_endpoint_ssml, SpeechServiceEndpoint},
     types::{
         common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType},
-        tts::{Voice, TTS_SSML},
-        Gender, Locale, VoiceName,
+        tts::Voice,
+        SSML,
     },
 };
 
@@ -45,36 +46,20 @@ use crate::azure::{
 ///
 /// Source: <https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/rest-text-to-speech>
 pub struct Speech {
-    voice: VoiceName,
-    gender: Gender,
-    lang: Locale,
+    ssml: SSML,
     output_format: MicrosoftOutputFormat,
 }
 
 impl Default for Speech {
     fn default() -> Self {
         Self {
-            voice: VoiceName::en_US_ChristopherNeural,
-            gender: Gender::Male,
-            lang: Locale::en_US,
+            ssml: SSML::default(),
             output_format: MicrosoftOutputFormat::Ogg_24khz_16bit_Mono_Opus,
         }
     }
 }
 
 impl Speech {
-    pub fn voice(self, v: VoiceName) -> Self {
-        Self { voice: v, ..self }
-    }
-
-    pub fn gender(self, g: Gender) -> Self {
-        Self { gender: g, ..self }
-    }
-
-    pub fn lang(self, l: Locale) -> Self {
-        Self { lang: l, ..self }
-    }
-
     pub fn format(self, f: MicrosoftOutputFormat) -> Self {
         Self {
             output_format: f,
@@ -82,13 +67,17 @@ impl Speech {
         }
     }
 
-    /// Get a full list of voices for a specific region or endpoint. Prefix the 
-    /// voices list endpoint with a region to get a list of voices for that 
+    pub fn ssml(self, ssml: SSML) -> Self {
+        Self { ssml, ..self }
+    }
+
+    /// Get a full list of voices for a specific region or endpoint. Prefix the
+    /// voices list endpoint with a region to get a list of voices for that
     /// region. This is preconfigured in your `config.yml`.
-    /// 
-    /// Voices and styles in preview are only available in three service 
+    ///
+    /// Voices and styles in preview are only available in three service
     /// regions: East US, West Europe, and Southeast Asia.
-    /// 
+    ///
     /// Source: <https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/rest-text-to-speech>
     pub async fn voice_list() -> Result<Vec<Voice>, Box<dyn std::error::Error>> {
         let text = request_get_endpoint(&SpeechServiceEndpoint::Get_List_of_Voices).await?;
@@ -107,17 +96,12 @@ impl Speech {
     /// the endpoint or region that you plan to use is required.
     ///
     /// Source: <https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/rest-text-to-speech>
-    pub async fn text_to_speech(self, text: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-        let ssml = TTS_SSML::default()
-            .set_content(text)
-            .set_gender(self.gender.clone())
-            .set_lang(self.lang.clone())
-            .set_voice(self.voice.clone());
+    pub async fn text_to_speech(self) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
         let mut headers = HeaderMap::new();
         headers.insert("X-Microsoft-OutputFormat", self.output_format.into());
         match request_post_endpoint_ssml(
             &SpeechServiceEndpoint::Convert_Text_to_Speech,
-            ssml,
+            self.ssml,
             ResponseExpectation::Bytes,
             headers,
         )
@@ -130,7 +114,7 @@ impl Speech {
     }
 
     /// Same as `text_to_speech`.
-    pub async fn tts(self, text: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-        Ok(self.text_to_speech(text).await?)
+    pub async fn tts(self) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+        Ok(self.text_to_speech().await?)
     }
 }
