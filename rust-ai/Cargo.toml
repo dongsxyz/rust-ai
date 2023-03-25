@@ -2,11 +2,11 @@
 name = "rust-ai"
 authors = ["Zhongdong Yang"]
 description = "A collection of 3rd-party AI APIs for Rust"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 license = "Apache-2.0"
-repository = "https://github.com/zhongdongy/rust-ai/"
-homepage = "https://github.com/zhongdongy/rust-ai/"
+repository = "https://github.com/dongsxyz/rust-ai/"
+homepage = "https://github.com/dongsxyz/rust-ai/"
 include = ["/src", "/log4rs.yml"]
 readme = "README.md"
 documentation = "https://docs.rs/rust-ai"

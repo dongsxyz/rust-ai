@@ -900,7 +900,7 @@ dependencies = [
 
 [[package]]
 name = "rust-ai"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "isolang",
  "lazy_static",
@@ -926,7 +926,7 @@ dependencies = [
 
 [[package]]
 name = "rust-ai-generator"
-version = "0.1.6"
+version = "0.1.7"
 dependencies = [
  "chrono",
  "rust-ai",
