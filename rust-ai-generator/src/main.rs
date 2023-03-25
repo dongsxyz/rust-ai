@@ -92,7 +92,7 @@ impl Into<String> for VoiceName {{
         );
 
         let mut voice_name_path = PathBuf::from("rust-ai");
-        "src/azure/types/voice_name.rs".split("/").for_each(|seg| {
+        "src/azure/types/ssml/voice_name.rs".split("/").for_each(|seg| {
             voice_name_path = voice_name_path.join(seg);
         });
 
