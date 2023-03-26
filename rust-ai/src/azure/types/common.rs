@@ -1,4 +1,5 @@
 use reqwest::header::HeaderValue;
+use serde::{Deserialize, Serialize};
 
 /// Available gender variants implemented for Azure.
 #[derive(Debug, Clone)]
@@ -17,7 +18,7 @@ impl Into<String> for Gender {
     }
 }
 
-/// Describes what type of data is wrapped inside: byte vector, plain text 
+/// Describes what type of data is wrapped inside: byte vector, plain text
 /// or JSON.
 #[derive(Debug, Clone)]
 pub enum ResponseType {
@@ -33,20 +34,20 @@ pub enum ResponseExpectation {
 }
 
 /// Microsoft output format definitions
-/// 
-/// The supported streaming and non-streaming audio formats are sent in each 
-/// request as the `X-Microsoft-OutputFormat` header. Each format incorporates a 
-/// bit rate and encoding type. The Speech service supports 48-kHz, 24-kHz, 
-/// 16-kHz, and 8-kHz audio outputs. Each prebuilt neural voice model is 
+///
+/// The supported streaming and non-streaming audio formats are sent in each
+/// request as the `X-Microsoft-OutputFormat` header. Each format incorporates a
+/// bit rate and encoding type. The Speech service supports 48-kHz, 24-kHz,
+/// 16-kHz, and 8-kHz audio outputs. Each prebuilt neural voice model is
 /// available at 24kHz and high-fidelity 48kHz.
-/// 
-/// If you select 48kHz output format, the high-fidelity voice model with 48kHz 
-/// will be invoked accordingly. The sample rates other than 24kHz and 48kHz can 
-/// be obtained through upsampling or downsampling when synthesizing, for 
+///
+/// If you select 48kHz output format, the high-fidelity voice model with 48kHz
+/// will be invoked accordingly. The sample rates other than 24kHz and 48kHz can
+/// be obtained through upsampling or downsampling when synthesizing, for
 /// example, 44.1kHz is downsampled from 48kHz.
-/// 
-/// If your selected voice and output format have different bit rates, the 
-/// audio is resampled as necessary. You can decode the 
+///
+/// If your selected voice and output format have different bit rates, the
+/// audio is resampled as necessary. You can decode the
 /// `ogg-24khz-16bit-mono-opus` format by using the Opus codec.
 ///
 /// Source: <https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/rest-text-to-speech>
@@ -205,6 +206,56 @@ impl Into<String> for MicrosoftOutputFormat {
             Self::Riff_24khz_16bit_Mono_Pcm => "riff-24khz-16bit-mono-pcm",
             Self::Riff_44100hz_16bit_Mono_Pcm => "riff-44100hz-16bit-mono-pcm",
             Self::Riff_48khz_16bit_Mono_Pcm => "riff-48khz-16bit-mono-pcm",
+        })
+        .into()
+    }
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ServiceHealthResponse {
+    /// Health status of the service.
+    pub status: HealthStatus,
+
+    /// Additional messages about the current service health.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+
+    /// Optional subcomponents of this service and their status.
+    pub components: Vec<ComponentHealth>,
+}
+
+/// Subcomponent health status.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct ComponentHealth {
+    /// Health status of the component.
+    pub status: HealthStatus,
+
+    /// Additional messages about the current service component health.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+
+    /// The name of the component.
+    pub name: String,
+
+    /// The type of this component.
+    #[serde(rename = "type")]
+    pub ty: String,
+}
+
+/// Health status of the service.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub enum HealthStatus {
+    Unhealthy,
+    Healthy,
+    Degraded,
+}
+
+impl Into<String> for HealthStatus {
+    fn into(self) -> String {
+        (match self {
+            Self::Degraded => "Degraded",
+            Self::Healthy => "Healthy",
+            Self::Unhealthy => "Unhealthy",
         })
         .into()
     }

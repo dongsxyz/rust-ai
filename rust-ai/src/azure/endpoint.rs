@@ -13,7 +13,8 @@ use super::{
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum SpeechServiceEndpoint {
     Get_List_of_Voices,
-    Convert_Text_to_Speech,
+    Convert_Text_to_Speech_v1,
+    Get_Speech_to_Text_Health_Status_v3_1
 }
 
 impl SpeechServiceEndpoint {
@@ -24,8 +25,14 @@ impl SpeechServiceEndpoint {
                 region
             ),
 
-            Self::Convert_Text_to_Speech => format!(
+            Self::Convert_Text_to_Speech_v1 => format!(
                 "https://{}.tts.speech.microsoft.com/cognitiveservices/v1",
+                region
+            ),
+
+            
+            Self::Get_Speech_to_Text_Health_Status_v3_1 => format!(
+                "https://{}.cognitiveservices.azure.com/speechtotext/v3.1/healthstatus",
                 region
             ),
         }

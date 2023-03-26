@@ -35,7 +35,7 @@ use reqwest::header::HeaderMap;
 use crate::azure::{
     endpoint::{request_get_endpoint, request_post_endpoint_ssml, SpeechServiceEndpoint},
     types::{
-        common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType},
+        common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType, ServiceHealthResponse},
         tts::Voice,
         SSML,
     },
@@ -100,6 +100,23 @@ impl Speech {
         }
     }
 
+    /// Health status provides insights about the overall health of the service 
+    /// and sub-components.
+    /// 
+    /// V3.1 API supported only.
+    pub async fn health_check() -> Result<ServiceHealthResponse, Box<dyn std::error::Error>> {
+        let text =
+            request_get_endpoint(&SpeechServiceEndpoint::Get_Speech_to_Text_Health_Status_v3_1).await?;
+
+        match serde_json::from_str::<ServiceHealthResponse>(&text) {
+            Ok(status) => Ok(status),
+            Err(e) => {
+                warn!(target: "azure", "Error parsing response: {:?}", e);
+                Err("Unable to parse health status of speech cognitive services, check log for details".into())
+            }
+        }
+    }
+
     /// The text-to-speech REST API supports neural text-to-speech voices, which
     /// support specific languages and dialects that are identified by locale. Each
     /// available endpoint is associated with a region. A Speech resource key for
@@ -110,7 +127,7 @@ impl Speech {
         let mut headers = HeaderMap::new();
         headers.insert("X-Microsoft-OutputFormat", self.output_format.into());
         match request_post_endpoint_ssml(
-            &SpeechServiceEndpoint::Convert_Text_to_Speech,
+            &SpeechServiceEndpoint::Convert_Text_to_Speech_v1,
             self.ssml,
             ResponseExpectation::Bytes,
             headers,
