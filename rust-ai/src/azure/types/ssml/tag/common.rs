@@ -175,45 +175,45 @@ impl Into<String> for VoiceTagInternal {
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum VoiceTagName {
-    /// SSML tag element "<audio>"
+    /// SSML tag element "`audio`"
     Audio,
-    /// SSML tag element "<bookmark>"
+    /// SSML tag element "`bookmark`"
     Bookmark,
-    /// SSML tag element "<break>"
+    /// SSML tag element "`break`"
     Break,
-    /// SSML tag element "<emphasis>"
+    /// SSML tag element "`emphasis`"
     Emphasis,
-    /// SSML tag element "<lang>"
+    /// SSML tag element "`lang`"
     Lang,
-    /// SSML tag element "<lexicon>"
+    /// SSML tag element "`lexicon`"
     Lexicon,
-    /// SSML tag element "<math>"
+    /// SSML tag element "`math`"
     Math,
-    /// SSML tag element "<mstts:backgroundaudio>"
+    /// SSML tag element "`mstts:backgroundaudio`"
     MSTTS_BackgroundAudio,
-    /// SSML tag element "<mstts:audioduration>"
+    /// SSML tag element "`mstts:audioduration`"
     MSTTS_AudioDuration,
-    /// SSML tag element "<mstts:express-as>"
+    /// SSML tag element "`mstts:express-as`"
     MSTTS_ExpressAs,
-    /// SSML tag element "<mstts:silence>"
+    /// SSML tag element "`mstts:silence`"
     MSTTS_Silence,
-    /// SSML tag element "<mstts:viseme>"
+    /// SSML tag element "`mstts:viseme`"
     MSTTS_Viseme,
-    /// SSML tag element "<p>"
+    /// SSML tag element "`p`"
     P,
-    /// SSML tag element "<phoneme>"
+    /// SSML tag element "`phoneme`"
     Phoneme,
-    /// SSML tag element "<prosody>"
+    /// SSML tag element "`prosody`"
     Prosody,
-    /// SSML tag element "<s>"
+    /// SSML tag element "`s`"
     S,
-    /// SSML tag element "<say-as>"
+    /// SSML tag element "`say-as`"
     SayAs,
-    /// SSML tag element "<sub>"
+    /// SSML tag element "`sub`"
     Sub,
-    /// SSML tag element "<speak>"
+    /// SSML tag element "`speak`"
     Speak,
-    /// SSML tag element "<voice>"
+    /// SSML tag element "`voice`"
     Voice,
     /// Plain text element
     TEXT,

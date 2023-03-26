@@ -1,4 +1,21 @@
 //!
+//! # SSML document editing module
+//! 
+//! This module provide functionalities for you to create SSML elements, and 
+//! convert it into XML string.
+//! 
+//! # Example
+//! 
+//! ```rust
+//! let ssml = SSML::from(
+//!    Speak::voice_content(
+//!        VoiceName::zh_CN_YunhaoNeural,
+//!        "亲爱的朋友，美丽中国欢迎你！",
+//!    )
+//!    .lang(Locale::zh_CN),
+//! );
+//! ```
+//!  
 //! # Basic Structure
 //!
 //! ```ssml+xml
@@ -35,13 +52,30 @@ pub use self::tag::*;
 use super::locale::Locale;
 
 /// SSML format support
-/// 
-/// **Note**: to use the characters &, <, and > within the SSML element's value 
-/// or text, you must use the entity format. Specifically you must use &amp; in 
-/// place of &, use &lt; in place of <, and use &gt; in place of >. Otherwise 
+///
+/// **Note**: to use the characters &, <, and > within the SSML element's value
+/// or text, you must use the entity format. Specifically you must use &amp; in
+/// place of &, use &lt; in place of <, and use &gt; in place of >. Otherwise
 /// the SSML will not be parsed correctly.
-/// 
+///
 /// Source: <https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/speech-synthesis-markup-structure#special-characters>
+/// 
+/// If you would like to create a most simple SSML document, you will find
+/// [`Speak::voice_content`][crate::azure::ssml::Speak] very helpful. Just convert the `Speak` instance to `SSML` and that's done.
+/// 
+/// # Example
+/// 
+/// ```rust
+/// use rust_ai::azure::{ssml::Speak, Locale, VoiceName, SSML};
+/// 
+/// let ssml = SSML::from(
+///    Speak::voice_content(
+///        VoiceName::zh_CN_YunhaoNeural,
+///        "亲爱的朋友，美丽中国欢迎你！",
+///    )
+///    .lang(Locale::zh_CN),
+/// );
+/// ```
 #[derive(Debug, Clone)]
 pub struct SSML {
     speak: Speak,
@@ -63,8 +97,16 @@ impl SSML {
         }
     }
 
+    /// Replace internal root `speak` element
     pub fn speak(self, speak: Speak) -> Self {
         Self { speak, ..self }
+    }
+}
+
+impl From<Speak> for SSML {
+    /// Create an SSML document with new `speak` root element.
+    fn from(value: Speak) -> Self {
+        Self { speak: value }
     }
 }
 

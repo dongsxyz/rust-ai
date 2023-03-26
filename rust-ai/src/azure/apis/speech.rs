@@ -54,7 +54,17 @@ impl Default for Speech {
     fn default() -> Self {
         Self {
             ssml: SSML::default(),
-            output_format: MicrosoftOutputFormat::Ogg_24khz_16bit_Mono_Opus,
+            output_format: MicrosoftOutputFormat::Audio_24khz_48kbitrate_Mono_Mp3,
+        }
+    }
+}
+
+impl From<SSML> for Speech {
+    /// Convert SSML document into Speech endpoint instance directly.
+    fn from(value: SSML) -> Self {
+        Self {
+            ssml: value,
+            output_format: MicrosoftOutputFormat::Audio_24khz_48kbitrate_Mono_Mp3,
         }
     }
 }

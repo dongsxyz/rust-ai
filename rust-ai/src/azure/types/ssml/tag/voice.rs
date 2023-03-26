@@ -93,7 +93,18 @@ impl Into<VoiceTagInternal> for Voice {
     }
 }
 
-/// Voice effect for SSML <voice> element
+impl From<VoiceName> for Voice {
+    fn from(value: VoiceName) -> Self {
+        Self {
+            name: value,
+            effect: None,
+            internals: vec![],
+            content: String::new(),
+        }
+    }
+}
+
+/// Voice effect for SSML `voice` element
 ///
 /// Source: <https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/speech-synthesis-markup-voice#voice-element>
 #[allow(non_camel_case_types)]
