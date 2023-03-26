@@ -33,3 +33,4 @@ log4rs = "1.2.0"
 serde_with = "2.3.1"
 isolang = { version = "2.2.0", features = ["serde"] }
 lazy_static = "1.4.0"
+urlencoding = "2.1.2"

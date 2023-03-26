@@ -35,7 +35,8 @@ use reqwest::header::HeaderMap;
 use crate::azure::{
     endpoint::{request_get_endpoint, request_post_endpoint_ssml, SpeechServiceEndpoint},
     types::{
-        common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType, ServiceHealthResponse},
+        common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType},
+        speech::ServiceHealthResponse,
         tts::Voice,
         SSML,
     },
@@ -90,7 +91,7 @@ impl Speech {
     ///
     /// Source: <https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/rest-text-to-speech>
     pub async fn voice_list() -> Result<Vec<Voice>, Box<dyn std::error::Error>> {
-        let text = request_get_endpoint(&SpeechServiceEndpoint::Get_List_of_Voices).await?;
+        let text = request_get_endpoint(&SpeechServiceEndpoint::Get_List_of_Voices, None).await?;
         match serde_json::from_str::<Vec<Voice>>(&text) {
             Ok(voices) => Ok(voices),
             Err(e) => {
@@ -100,13 +101,16 @@ impl Speech {
         }
     }
 
-    /// Health status provides insights about the overall health of the service 
+    /// Health status provides insights about the overall health of the service
     /// and sub-components.
-    /// 
+    ///
     /// V3.1 API supported only.
     pub async fn health_check() -> Result<ServiceHealthResponse, Box<dyn std::error::Error>> {
-        let text =
-            request_get_endpoint(&SpeechServiceEndpoint::Get_Speech_to_Text_Health_Status_v3_1).await?;
+        let text = request_get_endpoint(
+            &SpeechServiceEndpoint::Get_Speech_to_Text_Health_Status_v3_1,
+            None,
+        )
+        .await?;
 
         match serde_json::from_str::<ServiceHealthResponse>(&text) {
             Ok(status) => Ok(status),
@@ -127,7 +131,7 @@ impl Speech {
         let mut headers = HeaderMap::new();
         headers.insert("X-Microsoft-OutputFormat", self.output_format.into());
         match request_post_endpoint_ssml(
-            &SpeechServiceEndpoint::Convert_Text_to_Speech_v1,
+            &SpeechServiceEndpoint::Post_Text_to_Speech_v1,
             self.ssml,
             ResponseExpectation::Bytes,
             headers,
@@ -143,5 +147,210 @@ impl Speech {
     /// Same as `text_to_speech`.
     pub async fn tts(self) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
         Ok(self.text_to_speech().await?)
+    }
+}
+
+/// TODO: remove `allow(dead_code)` when `models()` implemented.
+#[allow(dead_code)]
+pub struct SpeechModel {
+    model_id: Option<String>,
+
+    skip: Option<usize>,
+    top: Option<usize>,
+    filter: Option<FilterOperator>,
+}
+
+impl Default for SpeechModel {
+    fn default() -> Self {
+        Self {
+            model_id: None,
+            skip: None,
+            top: None,
+            filter: None,
+        }
+    }
+}
+
+impl SpeechModel {
+    pub fn skip(self, skip: usize) -> Self {
+        Self {
+            skip: Some(skip),
+            ..self
+        }
+    }
+    pub fn top(self, top: usize) -> Self {
+        Self {
+            top: Some(top),
+            ..self
+        }
+    }
+    pub fn filter(self, filter: FilterOperator) -> Self {
+        Self {
+            filter: Some(filter),
+            ..self
+        }
+    }
+
+    pub fn id(self, id: String) -> Self {
+        Self {
+            model_id: Some(id),
+            ..self
+        }
+    }
+
+    /// [Custom Speech]
+    /// Gets the list of custom models for the authenticated subscription.
+    ///
+    /// TODO: implement this.
+    pub async fn models(self) -> Result<(), Box<dyn std::error::Error>> {
+        todo!("Test with custom models");
+        // let mut params = HashMap::<String, String>::new();
+
+        // if let Some(skip) = self.skip {
+        //     params.insert("skip".into(), skip.to_string());
+        // }
+        // if let Some(top) = self.top {
+        //     params.insert("top".into(), top.to_string());
+        // }
+        // if let Some(filter) = self.filter {
+        //     params.insert("filter".into(), filter.to_string());
+        // }
+
+        // let text = request_get_endpoint(
+        //     &SpeechServiceEndpoint::Get_List_of_Models_v3_1,
+        //     Some(params),
+        // )
+        // .await?;
+
+        // println!("{}", text);
+
+        // match serde_json::from_str::<ServiceHealthResponse>(&text) {
+        //     Ok(status) => Ok(status),
+        //     Err(e) => {
+        //         warn!(target: "azure", "Error parsing response: {:?}", e);
+        //         Err("Unable to parse health status of speech cognitive services, check log for details".into())
+        //     }
+        // }
+
+        // Ok(())
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum FilterField {
+    DisplayName,
+    Description,
+    CreatedDateTime,
+    LastActionDateTime,
+    Status,
+    Locale,
+}
+
+impl Into<String> for FilterField {
+    fn into(self) -> String {
+        (match self {
+            Self::DisplayName => "displayName",
+            Self::Description => "description",
+            Self::CreatedDateTime => "createdDateTime",
+            Self::LastActionDateTime => "lastActionDateTime",
+            Self::Status => "status",
+            Self::Locale => "locale",
+        })
+        .into()
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum FilterOperator {
+    Eq(FilterField, String),
+    Ne(FilterField, String),
+    Gt(FilterField, String),
+    Ge(FilterField, String),
+    Lt(FilterField, String),
+    Le(FilterField, String),
+    And(Box<FilterOperator>, Box<FilterOperator>),
+    Or(Box<FilterOperator>, Box<FilterOperator>),
+    Not(Box<FilterOperator>),
+}
+impl FilterOperator {
+    pub fn and(self, op: FilterOperator) -> Self {
+        Self::And(Box::new(self), Box::new(op))
+    }
+    pub fn or(self, op: FilterOperator) -> Self {
+        Self::Or(Box::new(self), Box::new(op))
+    }
+    pub fn not(self) -> Self {
+        Self::Not(Box::new(self))
+    }
+
+    fn str(self, not: bool) -> String {
+        match self {
+            Self::And(a, b) => {
+                if not {
+                    format!("{} or {}", a.str(true), b.str(true))
+                } else {
+                    format!("{} and {}", a.str(false), b.str(false))
+                }
+            }
+
+            Self::Or(a, b) => {
+                if not {
+                    format!("{} and {}", a.str(true), b.str(true))
+                } else {
+                    format!("{} or {}", a.str(false), b.str(false))
+                }
+            }
+
+            Self::Not(a) => format!("{}", a.str(!not)),
+
+            Self::Eq(field, value) => format!(
+                "{} {} '{}'",
+                Into::<String>::into(field),
+                if not { "ne" } else { "eq" },
+                Into::<String>::into(value)
+            ),
+            Self::Ne(field, value) => format!(
+                "{} {} '{}'",
+                Into::<String>::into(field),
+                if not { "eq" } else { "ne" },
+                Into::<String>::into(value)
+            ),
+            Self::Gt(field, value) => format!(
+                "{} {} '{}'",
+                Into::<String>::into(field),
+                if not { "le" } else { "gt" },
+                Into::<String>::into(value)
+            ),
+            Self::Ge(field, value) => format!(
+                "{} {} '{}'",
+                Into::<String>::into(field),
+                if not { "lt" } else { "ge" },
+                Into::<String>::into(value)
+            ),
+            Self::Lt(field, value) => format!(
+                "{} {} '{}'",
+                Into::<String>::into(field),
+                if not { "ge" } else { "lt" },
+                Into::<String>::into(value)
+            ),
+            Self::Le(field, value) => format!(
+                "{} {} '{}'",
+                Into::<String>::into(field),
+                if not { "gt" } else { "le" },
+                Into::<String>::into(value)
+            ),
+        }
+    }
+}
+
+impl Into<String> for FilterOperator {
+    fn into(self) -> String {
+        self.str(false)
+    }
+}
+
+impl ToString for FilterOperator {
+    fn to_string(&self) -> String {
+        Into::<String>::into(self.clone())
     }
 }

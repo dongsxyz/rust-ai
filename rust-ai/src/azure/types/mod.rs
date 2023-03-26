@@ -2,6 +2,7 @@ pub mod common;
 pub mod locale;
 pub mod tts;
 pub mod ssml;
+pub mod speech;
 
 pub use locale::Locale;
 pub use ssml::voice_name::VoiceName;
