@@ -12,3 +12,7 @@ log4rs = "1.2.0"
 [[bin]]
 name = "azure-text-to-speech"
 path = "src/text-to-speech.rs"
+
+[[bin]]
+name = "azure-batch-create-transcription"
+path = "src/batch-create-transcription.rs"

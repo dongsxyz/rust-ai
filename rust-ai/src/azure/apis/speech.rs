@@ -29,14 +29,20 @@
 //!
 //! For use of styles and roles, see [docs/azure-voices-n-roles.md](https://github.com/dongsxyz/rust-ai/blob/master/docs/azure-voices-n-roles.md).
 
-use log::warn;
+use log::{error, warn};
 use reqwest::header::HeaderMap;
 
 use crate::azure::{
-    endpoint::{request_get_endpoint, request_post_endpoint_ssml, SpeechServiceEndpoint},
+    endpoint::{
+        request_get_endpoint, request_post_endpoint, request_post_endpoint_ssml,
+        SpeechServiceEndpoint,
+    },
     types::{
         common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType},
-        speech::ServiceHealthResponse,
+        speech::{
+            transcription::{PaginatedFiles, Status, Transcription},
+            ErrorResponse, FilterOperator, ServiceHealthResponse,
+        },
         tts::Voice,
         SSML,
     },
@@ -91,7 +97,8 @@ impl Speech {
     ///
     /// Source: <https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/rest-text-to-speech>
     pub async fn voice_list() -> Result<Vec<Voice>, Box<dyn std::error::Error>> {
-        let text = request_get_endpoint(&SpeechServiceEndpoint::Get_List_of_Voices, None).await?;
+        let text =
+            request_get_endpoint(&SpeechServiceEndpoint::Get_List_of_Voices, None, None).await?;
         match serde_json::from_str::<Vec<Voice>>(&text) {
             Ok(voices) => Ok(voices),
             Err(e) => {
@@ -108,6 +115,7 @@ impl Speech {
     pub async fn health_check() -> Result<ServiceHealthResponse, Box<dyn std::error::Error>> {
         let text = request_get_endpoint(
             &SpeechServiceEndpoint::Get_Speech_to_Text_Health_Status_v3_1,
+            None,
             None,
         )
         .await?;
@@ -134,7 +142,7 @@ impl Speech {
             &SpeechServiceEndpoint::Post_Text_to_Speech_v1,
             self.ssml,
             ResponseExpectation::Bytes,
-            headers,
+            Some(headers),
         )
         .await
         {
@@ -158,6 +166,8 @@ pub struct SpeechModel {
     skip: Option<usize>,
     top: Option<usize>,
     filter: Option<FilterOperator>,
+
+    transcription: Option<Transcription>,
 }
 
 impl Default for SpeechModel {
@@ -167,6 +177,7 @@ impl Default for SpeechModel {
             skip: None,
             top: None,
             filter: None,
+            transcription: None,
         }
     }
 }
@@ -194,6 +205,13 @@ impl SpeechModel {
     pub fn id(self, id: String) -> Self {
         Self {
             model_id: Some(id),
+            ..self
+        }
+    }
+
+    pub fn transcription(self, transcription: Transcription) -> Self {
+        Self {
+            transcription: Some(transcription),
             ..self
         }
     }
@@ -234,123 +252,128 @@ impl SpeechModel {
 
         // Ok(())
     }
-}
 
-#[derive(Clone, Debug)]
-pub enum FilterField {
-    DisplayName,
-    Description,
-    CreatedDateTime,
-    LastActionDateTime,
-    Status,
-    Locale,
-}
-
-impl Into<String> for FilterField {
-    fn into(self) -> String {
-        (match self {
-            Self::DisplayName => "displayName",
-            Self::Description => "description",
-            Self::CreatedDateTime => "createdDateTime",
-            Self::LastActionDateTime => "lastActionDateTime",
-            Self::Status => "status",
-            Self::Locale => "locale",
-        })
-        .into()
+    pub async fn create_transcription(self) -> Result<Transcription, Box<dyn std::error::Error>> {
+        return if let Some(transcription) = self.transcription {
+            if let ResponseType::Text(text) = request_post_endpoint(
+                &SpeechServiceEndpoint::Post_Batch_Transcriptions_v3_1,
+                transcription,
+                ResponseExpectation::Text,
+                None,
+            )
+            .await?
+            {
+                return match serde_json::from_str::<Transcription>(&text) {
+                    Ok(trans) => Ok(trans),
+                    Err(e) => {
+                        warn!(target: "azure", "Unable to parse transcription creation result: `{:#?}`", e);
+                        match serde_json::from_str::<ErrorResponse>(&text) {
+                            Ok(error) => {
+                                println!("{:#?}", error);
+                                error!(target: "azure", "Error from Azure: `{:?}`", e);
+                                Err(Box::new(e))
+                            }
+                            Err(e) => {
+                                error!(target: "azure", "Unable to parse error response: `{:?}`", e);
+                                Err(Box::new(e))
+                            }
+                        }
+                    }
+                };
+            } else {
+                Err("Unable to load output from Azure speech service endpoint".into())
+            }
+        } else {
+            Err("You need to call `transcription()` before create on Azure".into())
+        };
     }
 }
 
-#[derive(Clone, Debug)]
-pub enum FilterOperator {
-    Eq(FilterField, String),
-    Ne(FilterField, String),
-    Gt(FilterField, String),
-    Ge(FilterField, String),
-    Lt(FilterField, String),
-    Le(FilterField, String),
-    And(Box<FilterOperator>, Box<FilterOperator>),
-    Or(Box<FilterOperator>, Box<FilterOperator>),
-    Not(Box<FilterOperator>),
-}
-impl FilterOperator {
-    pub fn and(self, op: FilterOperator) -> Self {
-        Self::And(Box::new(self), Box::new(op))
-    }
-    pub fn or(self, op: FilterOperator) -> Self {
-        Self::Or(Box::new(self), Box::new(op))
-    }
-    pub fn not(self) -> Self {
-        Self::Not(Box::new(self))
-    }
+impl Transcription {
+    /// Check transcription status
+    ///
+    /// This will only succeed when you've submitted the initial batch create
+    /// request to Azure endpoint.
+    pub async fn status(self) -> Result<Transcription, Box<dyn std::error::Error>> {
+        let text = request_get_endpoint(
+            &SpeechServiceEndpoint::Get_Transcription_Status_v3_1,
+            None,
+            Some(self.transcription_id().unwrap()),
+        )
+        .await?;
 
-    fn str(self, not: bool) -> String {
-        match self {
-            Self::And(a, b) => {
-                if not {
-                    format!("{} or {}", a.str(true), b.str(true))
-                } else {
-                    format!("{} and {}", a.str(false), b.str(false))
+        return match serde_json::from_str::<Transcription>(&text) {
+            Ok(trans) => Ok(trans),
+            Err(e) => {
+                warn!(target: "azure", "Unable to parse transcription status result: `{:#?}`", e);
+                match serde_json::from_str::<ErrorResponse>(&text) {
+                    Ok(error) => {
+                        println!("{:#?}", error);
+                        error!(target: "azure", "Error from Azure: `{:?}`", e);
+                        Err(Box::new(e))
+                    }
+                    Err(e) => {
+                        error!(target: "azure", "Unable to parse error response: `{:?}`", e);
+                        Err(Box::new(e))
+                    }
                 }
             }
+        };
+    }
 
-            Self::Or(a, b) => {
-                if not {
-                    format!("{} and {}", a.str(true), b.str(true))
-                } else {
-                    format!("{} or {}", a.str(false), b.str(false))
+    /// Get batch transcription result from Azure endpoint
+    pub async fn results(self) -> Result<PaginatedFiles, Box<dyn std::error::Error>> {
+        if let None = self.status.clone() {
+            return Err("You should submit the create request first.".into());
+        } else {
+            match self.status.clone().unwrap() {
+                Status::Succeeded => (),
+                Status::Failed => {
+                    return Err("The transcription failed, thus no results available.".into())
                 }
+                Status::NotStarted => return Err("Please wait for transcription to start.".into()),
+                Status::Running => return Err("Please wait until results available.".into()),
             }
-
-            Self::Not(a) => format!("{}", a.str(!not)),
-
-            Self::Eq(field, value) => format!(
-                "{} {} '{}'",
-                Into::<String>::into(field),
-                if not { "ne" } else { "eq" },
-                Into::<String>::into(value)
-            ),
-            Self::Ne(field, value) => format!(
-                "{} {} '{}'",
-                Into::<String>::into(field),
-                if not { "eq" } else { "ne" },
-                Into::<String>::into(value)
-            ),
-            Self::Gt(field, value) => format!(
-                "{} {} '{}'",
-                Into::<String>::into(field),
-                if not { "le" } else { "gt" },
-                Into::<String>::into(value)
-            ),
-            Self::Ge(field, value) => format!(
-                "{} {} '{}'",
-                Into::<String>::into(field),
-                if not { "lt" } else { "ge" },
-                Into::<String>::into(value)
-            ),
-            Self::Lt(field, value) => format!(
-                "{} {} '{}'",
-                Into::<String>::into(field),
-                if not { "ge" } else { "lt" },
-                Into::<String>::into(value)
-            ),
-            Self::Le(field, value) => format!(
-                "{} {} '{}'",
-                Into::<String>::into(field),
-                if not { "gt" } else { "le" },
-                Into::<String>::into(value)
-            ),
         }
+
+        let text = request_get_endpoint(
+            &SpeechServiceEndpoint::Get_Transcription_Results_v3_1,
+            None,
+            Some(format!("{}/files", self.transcription_id().unwrap())),
+        )
+        .await?;
+
+        println!("{}", text);
+
+        return match serde_json::from_str::<PaginatedFiles>(&text) {
+            Ok(files) => Ok(files),
+            Err(e) => {
+                warn!(target: "azure", "Unable to parse transcription status result: `{:#?}`", e);
+                match serde_json::from_str::<ErrorResponse>(&text) {
+                    Ok(error) => {
+                        println!("{:#?}", error);
+                        error!(target: "azure", "Error from Azure: `{:?}`", e);
+                        Err(Box::new(e))
+                    }
+                    Err(e) => {
+                        error!(target: "azure", "Unable to parse error response: `{:?}`", e);
+                        Err(Box::new(e))
+                    }
+                }
+            }
+        };
     }
 }
 
-impl Into<String> for FilterOperator {
-    fn into(self) -> String {
-        self.str(false)
-    }
-}
-
-impl ToString for FilterOperator {
-    fn to_string(&self) -> String {
-        Into::<String>::into(self.clone())
+impl PaginatedFiles {
+    /// Load more results from Azure endpoint.
+    ///
+    /// TODO: Note, this method is not implemented yet!
+    pub async fn more(self) -> Result<Option<PaginatedFiles>, Box<dyn std::error::Error>> {
+        if let Some(_next_page_url) = self.next_link {
+            todo!("Unimplemented method");
+        } else {
+            Ok(None)
+        }
     }
 }

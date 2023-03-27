@@ -3,7 +3,7 @@
 //! 
 //! Locale names fetched from Microsoft Cognitive Services API.
 //! 
-//! Updated on 2023-03-24.
+//! Updated on 2023-03-27.
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -441,7 +441,7 @@ pub enum Locale {
 
 impl Into<String> for Locale {
     fn into(self) -> String {
-        (match self {
+      (match self {
             Self::af_ZA => "af-ZA",
             Self::am_ET => "am-ET",
             Self::ar_AE => "ar-AE",
@@ -584,7 +584,202 @@ impl Into<String> for Locale {
             Self::zh_HK => "zh-HK",
             Self::zh_TW => "zh-TW",
             Self::zu_ZA => "zu-ZA",
-        })
-        .into()
+      })
+      .into()
+  }
+}
+
+
+impl From<&str> for Locale {
+    fn from(value: &str) -> Self {
+        match value {
+            "af-ZA" => Self::af_ZA,
+            "am-ET" => Self::am_ET,
+            "ar-AE" => Self::ar_AE,
+            "ar-BH" => Self::ar_BH,
+            "ar-DZ" => Self::ar_DZ,
+            "ar-EG" => Self::ar_EG,
+            "ar-IQ" => Self::ar_IQ,
+            "ar-JO" => Self::ar_JO,
+            "ar-KW" => Self::ar_KW,
+            "ar-LB" => Self::ar_LB,
+            "ar-LY" => Self::ar_LY,
+            "ar-MA" => Self::ar_MA,
+            "ar-OM" => Self::ar_OM,
+            "ar-QA" => Self::ar_QA,
+            "ar-SA" => Self::ar_SA,
+            "ar-SY" => Self::ar_SY,
+            "ar-TN" => Self::ar_TN,
+            "ar-YE" => Self::ar_YE,
+            "az-AZ" => Self::az_AZ,
+            "bg-BG" => Self::bg_BG,
+            "bn-BD" => Self::bn_BD,
+            "bn-IN" => Self::bn_IN,
+            "bs-BA" => Self::bs_BA,
+            "ca-ES" => Self::ca_ES,
+            "cs-CZ" => Self::cs_CZ,
+            "cy-GB" => Self::cy_GB,
+            "da-DK" => Self::da_DK,
+            "de-AT" => Self::de_AT,
+            "de-CH" => Self::de_CH,
+            "de-DE" => Self::de_DE,
+            "el-GR" => Self::el_GR,
+            "en-AU" => Self::en_AU,
+            "en-CA" => Self::en_CA,
+            "en-GB" => Self::en_GB,
+            "en-HK" => Self::en_HK,
+            "en-IE" => Self::en_IE,
+            "en-IN" => Self::en_IN,
+            "en-KE" => Self::en_KE,
+            "en-NG" => Self::en_NG,
+            "en-NZ" => Self::en_NZ,
+            "en-PH" => Self::en_PH,
+            "en-SG" => Self::en_SG,
+            "en-TZ" => Self::en_TZ,
+            "en-US" => Self::en_US,
+            "en-ZA" => Self::en_ZA,
+            "es-AR" => Self::es_AR,
+            "es-BO" => Self::es_BO,
+            "es-CL" => Self::es_CL,
+            "es-CO" => Self::es_CO,
+            "es-CR" => Self::es_CR,
+            "es-CU" => Self::es_CU,
+            "es-DO" => Self::es_DO,
+            "es-EC" => Self::es_EC,
+            "es-ES" => Self::es_ES,
+            "es-GQ" => Self::es_GQ,
+            "es-GT" => Self::es_GT,
+            "es-HN" => Self::es_HN,
+            "es-MX" => Self::es_MX,
+            "es-NI" => Self::es_NI,
+            "es-PA" => Self::es_PA,
+            "es-PE" => Self::es_PE,
+            "es-PR" => Self::es_PR,
+            "es-PY" => Self::es_PY,
+            "es-SV" => Self::es_SV,
+            "es-US" => Self::es_US,
+            "es-UY" => Self::es_UY,
+            "es-VE" => Self::es_VE,
+            "et-EE" => Self::et_EE,
+            "eu-ES" => Self::eu_ES,
+            "fa-IR" => Self::fa_IR,
+            "fi-FI" => Self::fi_FI,
+            "fil-PH" => Self::fil_PH,
+            "fr-BE" => Self::fr_BE,
+            "fr-CA" => Self::fr_CA,
+            "fr-CH" => Self::fr_CH,
+            "fr-FR" => Self::fr_FR,
+            "ga-IE" => Self::ga_IE,
+            "gl-ES" => Self::gl_ES,
+            "gu-IN" => Self::gu_IN,
+            "he-IL" => Self::he_IL,
+            "hi-IN" => Self::hi_IN,
+            "hr-HR" => Self::hr_HR,
+            "hu-HU" => Self::hu_HU,
+            "hy-AM" => Self::hy_AM,
+            "id-ID" => Self::id_ID,
+            "is-IS" => Self::is_IS,
+            "it-IT" => Self::it_IT,
+            "ja-JP" => Self::ja_JP,
+            "jv-ID" => Self::jv_ID,
+            "ka-GE" => Self::ka_GE,
+            "kk-KZ" => Self::kk_KZ,
+            "km-KH" => Self::km_KH,
+            "kn-IN" => Self::kn_IN,
+            "ko-KR" => Self::ko_KR,
+            "lo-LA" => Self::lo_LA,
+            "lt-LT" => Self::lt_LT,
+            "lv-LV" => Self::lv_LV,
+            "mk-MK" => Self::mk_MK,
+            "ml-IN" => Self::ml_IN,
+            "mn-MN" => Self::mn_MN,
+            "mr-IN" => Self::mr_IN,
+            "ms-MY" => Self::ms_MY,
+            "mt-MT" => Self::mt_MT,
+            "my-MM" => Self::my_MM,
+            "nb-NO" => Self::nb_NO,
+            "ne-NP" => Self::ne_NP,
+            "nl-BE" => Self::nl_BE,
+            "nl-NL" => Self::nl_NL,
+            "pl-PL" => Self::pl_PL,
+            "ps-AF" => Self::ps_AF,
+            "pt-BR" => Self::pt_BR,
+            "pt-PT" => Self::pt_PT,
+            "ro-RO" => Self::ro_RO,
+            "ru-RU" => Self::ru_RU,
+            "si-LK" => Self::si_LK,
+            "sk-SK" => Self::sk_SK,
+            "sl-SI" => Self::sl_SI,
+            "so-SO" => Self::so_SO,
+            "sq-AL" => Self::sq_AL,
+            "sr-RS" => Self::sr_RS,
+            "su-ID" => Self::su_ID,
+            "sv-SE" => Self::sv_SE,
+            "sw-KE" => Self::sw_KE,
+            "sw-TZ" => Self::sw_TZ,
+            "ta-IN" => Self::ta_IN,
+            "ta-LK" => Self::ta_LK,
+            "ta-MY" => Self::ta_MY,
+            "ta-SG" => Self::ta_SG,
+            "te-IN" => Self::te_IN,
+            "th-TH" => Self::th_TH,
+            "tr-TR" => Self::tr_TR,
+            "uk-UA" => Self::uk_UA,
+            "ur-IN" => Self::ur_IN,
+            "ur-PK" => Self::ur_PK,
+            "uz-UZ" => Self::uz_UZ,
+            "vi-VN" => Self::vi_VN,
+            "wuu-CN" => Self::wuu_CN,
+            "yue-CN" => Self::yue_CN,
+            "zh-CN" => Self::zh_CN,
+            "zh-HK" => Self::zh_HK,
+            "zh-TW" => Self::zh_TW,
+            "zu-ZA" => Self::zu_ZA,
+        _ => {
+          log::warn!( target: "rust-ai", "Unrecognized locale `{}`", value);
+          todo!("The local file should be updated and regenerated")
+        }
+      }
+  }
+}
+
+impl serde::Serialize for Locale {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let content = Into::<String>::into(self.clone());
+        serializer.serialize_str(&content)
+    }
+}
+struct LocaleVisitor;
+
+impl<'de> serde::de::Visitor<'de> for LocaleVisitor {
+    type Value = Locale;
+    fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        Ok(Into::<Self::Value>::into(v.as_str()))
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        Ok(Into::<Self::Value>::into(v))
+    }
+
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        formatter.write_str("Unrecognizable locale string.")
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Locale {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        deserializer.deserialize_string(LocaleVisitor)
     }
 }
