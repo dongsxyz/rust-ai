@@ -14,9 +14,12 @@ readme = "README.md"
 
 [dependencies]
 chrono = "0.4.24"
-rust-ai = { path = "../rust-ai", version = "0.1.8" }
+reqwest = { version = "0.11.15", features = ["json", "multipart"] }
+serde = { version = "1.0.158", features = ["derive"] }
+serde_json = "1.0.94"
+serde_yaml = "0.9.19"
 tokio = { version = "1.26.0", features = ["full"] }
 
 [[bin]]
-name = "rsai-bootstrap"
+name = "rsai-generator"
 path = "src/main.rs"
