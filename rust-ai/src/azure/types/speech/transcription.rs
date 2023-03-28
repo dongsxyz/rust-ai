@@ -355,3 +355,20 @@ impl Default for TranscriptionProperties {
         }
     }
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct TranscriptionReport {
+    #[serde(rename = "successfulTranscriptionsCount")]
+    pub successful_transcriptions_count: usize,
+
+    #[serde(rename = "failedTranscriptionsCount")]
+    
+    pub failed_transcriptions_count: usize,
+    pub details: Vec<TranscriptionReportDetail>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct TranscriptionReportDetail {
+    pub source: String,
+    pub status: String,
+}

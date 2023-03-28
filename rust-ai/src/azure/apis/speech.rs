@@ -43,10 +43,10 @@ use crate::azure::{
         common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType},
         speech::{
             entity::EntityReference,
-            file::{File, PaginatedFiles},
+            file::{File, FileKind, PaginatedFiles},
             filter::FilterOperator,
             health::ServiceHealth,
-            transcription::{Status, Transcription},
+            transcription::{Status, Transcription, TranscriptionReport},
             ErrorResponse,
         },
         tts::Voice,
@@ -410,6 +410,46 @@ impl PaginatedFiles {
     pub async fn more(self) -> Result<Option<PaginatedFiles>, Box<dyn std::error::Error>> {
         if let Some(_next_page_url) = self.next_link {
             todo!("Unimplemented method");
+        } else {
+            Ok(None)
+        }
+    }
+
+    pub async fn report(self) -> Result<Option<TranscriptionReport>, Box<dyn std::error::Error>> {
+        if self.values.len() == 0 {
+            return Ok(None);
+        }
+
+        let mut report = self
+            .values
+            .iter()
+            .filter(|file| file.kind == FileKind::TranscriptionReport);
+
+        if let Some(report) = report.next().clone() {
+            let text = request_get_endpoint(
+                &SpeechServiceEndpoint::None,
+                None,
+                Some(report.links.content_url.clone()),
+            )
+            .await?;
+
+            return match serde_json::from_str::<TranscriptionReport>(&text) {
+                Ok(report) => Ok(Some(report)),
+                Err(e) => {
+                    warn!(target: "azure", "Unable to parse transcription result file: `{:#?}`", e);
+                    match serde_json::from_str::<ErrorResponse>(&text) {
+                        Ok(error) => {
+                            println!("{:#?}", error);
+                            error!(target: "azure", "Error from Azure: `{:?}`", e);
+                            Err(Box::new(e))
+                        }
+                        Err(e) => {
+                            error!(target: "azure", "Unable to parse error response: `{:?}`", e);
+                            Err(Box::new(e))
+                        }
+                    }
+                }
+            };
         } else {
             Ok(None)
         }

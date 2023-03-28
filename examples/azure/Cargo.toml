@@ -14,5 +14,5 @@ name = "azure-text-to-speech"
 path = "src/text-to-speech.rs"
 
 [[bin]]
-name = "azure-batch-create-transcription"
-path = "src/batch-create-transcription.rs"
+name = "azure-batch-transcription"
+path = "src/batch-transcription.rs"

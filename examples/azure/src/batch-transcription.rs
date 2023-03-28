@@ -15,13 +15,22 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .await?;
 
     std::thread::sleep(Duration::from_secs(5));
+
+    // Check transcription job status.
     let trans = trans.status().await?;
     if let Some(Status::Succeeded) = trans.status {
+        // Get transcription result files.
         let results = trans.files().await?;
-        let files = results.values;
+        let files = results.values.clone();
 
         if files.len() > 0 {
-            println!("{:#?}", files.get(0).unwrap().file().await?);
+            // Get transcription report.
+            let report = results.report().await?;
+            println!("{:#?}", report);
+
+            // Get transcription result file via individual API endpoint.
+            let file = files.get(0).unwrap().file().await?;
+            println!("{:#?}", file);
         }
     }
 

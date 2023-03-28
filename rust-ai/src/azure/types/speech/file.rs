@@ -74,7 +74,7 @@ impl File {
 }
 
 /// Type of data.
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub enum FileKind {
     /// Type of data is dataset report.
     DatasetReport,

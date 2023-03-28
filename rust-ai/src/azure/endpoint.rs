@@ -22,6 +22,7 @@ pub enum SpeechServiceEndpoint {
     Get_Transcription_v3_1,
     Get_Transcription_Files_v3_1,
     Get_Transcription_File_v3_1,
+    None,
 }
 
 impl SpeechServiceEndpoint {
@@ -56,20 +57,24 @@ impl SpeechServiceEndpoint {
                 "https://{}.api.cognitive.microsoft.com/speechtotext/v3.1/transcriptions/",
                 region
             ),
-            
+
             Self::Get_Transcription_Files_v3_1 => format!(
                 "https://{}.api.cognitive.microsoft.com/speechtotext/v3.1/transcriptions/",
                 region
             ),
-            
+
             Self::Get_Transcription_File_v3_1 => format!(
                 "https://{}.api.cognitive.microsoft.com/speechtotext/v3.1/transcriptions/",
                 region
             ),
+            Self::None => String::new(),
         }
     }
 }
 
+/// If you would like to use a plain request URI, pass 
+/// [`SpeechServiceEndpoint::None`] as the endpoint, and then provide the 
+/// complete URI through `url_suffix` parameter.
 pub async fn request_get_endpoint(
     endpoint: &SpeechServiceEndpoint,
     params: Option<HashMap<String, String>>,
@@ -78,7 +83,10 @@ pub async fn request_get_endpoint(
     let config = Config::load().unwrap();
     let region = config.azure.speech.region;
 
-    let mut url = endpoint.build(&region);
+    let mut url = match endpoint {
+        SpeechServiceEndpoint::None => String::new(),
+        _ => endpoint.build(&region),
+    };
 
     if let Some(url_suffix) = url_suffix {
         url.push_str(&url_suffix);
