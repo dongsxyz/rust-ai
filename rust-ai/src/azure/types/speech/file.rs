@@ -1,3 +1,5 @@
+use lazy_static::lazy_static;
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -38,6 +40,37 @@ pub struct File {
     /// Must be a valid URI string.
     #[serde(rename = "self")]
     pub _self: String,
+
+    /// Format - int32. The duration in seconds that an SAS url should be valid.
+    /// The default duration is 12 hours. When using BYOS (https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/speech-encryption-of-data-at-rest#bring-your-own-storage-byos-for-customization-and-logging):
+    /// A value of 0 means that a plain blob URI without SAS token will be
+    /// generated.
+    #[serde(skip)]
+    pub sas_validity_in_seconds: Option<u32>,
+}
+
+lazy_static! {
+    static ref RE_ID_EXTRACT: Regex =
+        Regex::new(r"/(?P<trans_id>[\da-z-]+)/files/(?P<file_id>[\da-z-]+)$").unwrap();
+}
+
+impl File {
+    /// Get file ID from a File instance.
+    pub fn file_id(&self) -> Result<(String, String), Box<dyn std::error::Error>> {
+        if let Some(captures) = RE_ID_EXTRACT.captures(&self._self) {
+            let error_message = match (captures.name("trans_id"), captures.name("file_id")) {
+                (None, None) => "Neither transcription ID nor file ID found in `self`",
+                (None, Some(_)) => "Transcription ID not found in `self`",
+                (Some(_), None) => "File ID not found in `self`",
+                (Some(trans_id), Some(file_id)) => {
+                    return Ok((trans_id.as_str().into(), file_id.as_str().into()));
+                }
+            };
+            Err(format!("{}: `{}`", error_message, self._self).into())
+        } else {
+            Err(format!("Incorrect format: `{}`", self._self).into())
+        }
+    }
 }
 
 /// Type of data.

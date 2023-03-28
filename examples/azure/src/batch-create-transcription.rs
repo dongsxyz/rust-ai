@@ -18,7 +18,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let trans = trans.status().await?;
     if let Some(Status::Succeeded) = trans.status {
         let results = trans.files().await?;
-        println!("{:#?}", results.values);
+        let files = results.values;
+
+        if files.len() > 0 {
+            println!("{:#?}", files.get(0).unwrap().file().await?);
+        }
     }
 
     Ok(())

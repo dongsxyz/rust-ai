@@ -180,8 +180,8 @@ lazy_static! {
 
 impl Transcription {
     /// Get transcription ID from a batch creation job.
-    pub fn transcription_id(self) -> Result<String, Box<dyn std::error::Error>> {
-        if let Some(_self) = self._self {
+    pub fn transcription_id(&self) -> Result<String, Box<dyn std::error::Error>> {
+        if let Some(_self) = self._self.clone() {
             if let Some(captures) = RE_TRANS_ID.captures(&_self) {
                 if let Some(trans_id) = captures.name("trans_id") {
                     Ok(trans_id.as_str().into())

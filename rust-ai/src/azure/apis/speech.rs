@@ -43,7 +43,7 @@ use crate::azure::{
         common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType},
         speech::{
             entity::EntityReference,
-            file::PaginatedFiles,
+            file::{File, PaginatedFiles},
             filter::FilterOperator,
             health::ServiceHealth,
             transcription::{Status, Transcription},
@@ -285,10 +285,10 @@ impl Transcription {
     }
 
     /// Create a new audio transcription job.
-    pub async fn create(self) -> Result<Transcription, Box<dyn std::error::Error>> {
+    pub async fn create(&self) -> Result<Transcription, Box<dyn std::error::Error>> {
         return if let ResponseType::Text(text) = request_post_endpoint(
             &SpeechServiceEndpoint::Post_Create_Transcription_v3_1,
-            self,
+            self.clone(),
             ResponseExpectation::Text,
             None,
         )
@@ -320,7 +320,7 @@ impl Transcription {
     ///
     /// This will only succeed when you've submitted the initial batch create
     /// request to Azure endpoint.
-    pub async fn status(self) -> Result<Transcription, Box<dyn std::error::Error>> {
+    pub async fn status(&self) -> Result<Transcription, Box<dyn std::error::Error>> {
         let text = request_get_endpoint(
             &SpeechServiceEndpoint::Get_Transcription_v3_1,
             None,
@@ -348,7 +348,7 @@ impl Transcription {
     }
 
     /// Get batch transcription result from Azure endpoint
-    pub async fn files(self) -> Result<PaginatedFiles, Box<dyn std::error::Error>> {
+    pub async fn files(&self) -> Result<PaginatedFiles, Box<dyn std::error::Error>> {
         if let None = self.status.clone() {
             return Err("You should submit the create request first.".into());
         } else {
@@ -386,7 +386,7 @@ impl Transcription {
         return match serde_json::from_str::<PaginatedFiles>(&text) {
             Ok(files) => Ok(files),
             Err(e) => {
-                warn!(target: "azure", "Unable to parse transcription status result: `{:#?}`", e);
+                warn!(target: "azure", "Unable to parse transcription files list result: `{:#?}`", e);
                 match serde_json::from_str::<ErrorResponse>(&text) {
                     Ok(error) => {
                         println!("{:#?}", error);
@@ -413,5 +413,42 @@ impl PaginatedFiles {
         } else {
             Ok(None)
         }
+    }
+}
+
+impl File {
+    /// Get file info from Azure transcription endpoint.
+    pub async fn file(&self) -> Result<File, Box<dyn std::error::Error>> {
+        let (trans_id, file_id) = self.file_id()?;
+
+        let mut params = HashMap::<String, String>::new();
+        if let Some(sas) = self.sas_validity_in_seconds.clone() {
+            params.insert("sasValidityInSeconds".into(), sas.to_string());
+        }
+
+        let text = request_get_endpoint(
+            &SpeechServiceEndpoint::Get_Transcription_File_v3_1,
+            Some(params),
+            Some(format!("{}/files/{}", trans_id, file_id)),
+        )
+        .await?;
+
+        return match serde_json::from_str::<File>(&text) {
+            Ok(file) => Ok(file),
+            Err(e) => {
+                warn!(target: "azure", "Unable to parse transcription result file: `{:#?}`", e);
+                match serde_json::from_str::<ErrorResponse>(&text) {
+                    Ok(error) => {
+                        println!("{:#?}", error);
+                        error!(target: "azure", "Error from Azure: `{:?}`", e);
+                        Err(Box::new(e))
+                    }
+                    Err(e) => {
+                        error!(target: "azure", "Unable to parse error response: `{:?}`", e);
+                        Err(Box::new(e))
+                    }
+                }
+            }
+        };
     }
 }

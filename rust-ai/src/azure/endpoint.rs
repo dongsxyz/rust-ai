@@ -21,6 +21,7 @@ pub enum SpeechServiceEndpoint {
     Post_Create_Transcription_v3_1,
     Get_Transcription_v3_1,
     Get_Transcription_Files_v3_1,
+    Get_Transcription_File_v3_1,
 }
 
 impl SpeechServiceEndpoint {
@@ -57,6 +58,11 @@ impl SpeechServiceEndpoint {
             ),
             
             Self::Get_Transcription_Files_v3_1 => format!(
+                "https://{}.api.cognitive.microsoft.com/speechtotext/v3.1/transcriptions/",
+                region
+            ),
+            
+            Self::Get_Transcription_File_v3_1 => format!(
                 "https://{}.api.cognitive.microsoft.com/speechtotext/v3.1/transcriptions/",
                 region
             ),
