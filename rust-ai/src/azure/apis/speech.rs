@@ -43,10 +43,13 @@ use crate::azure::{
         common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType},
         speech::{
             entity::EntityReference,
-            file::{File, FileKind, PaginatedFiles},
+            file::{File, FileKind, FileType, PaginatedFiles},
             filter::FilterOperator,
             health::ServiceHealth,
-            transcription::{Status, Transcription, TranscriptionReport},
+            transcription::{
+                Status, Transcription, TranscriptionProperties, TranscriptionReport,
+                TranscriptionResult,
+            },
             ErrorResponse,
         },
         tts::Voice,
@@ -247,6 +250,17 @@ impl Transcription {
         Self { locale, ..self }
     }
 
+    /// Pass in a closure to set the inner properties.
+    pub fn properties<F>(self, mut f: F) -> Self
+    where
+        F: FnMut(Option<TranscriptionProperties>) -> TranscriptionProperties,
+    {
+        Self {
+            properties: Some(f(self.properties)),
+            ..self
+        }
+    }
+
     /// [Custom Speech]
     /// Gets the list of custom models for the authenticated subscription.
     ///
@@ -320,7 +334,28 @@ impl Transcription {
     ///
     /// This will only succeed when you've submitted the initial batch create
     /// request to Azure endpoint.
-    pub async fn status(&self) -> Result<Transcription, Box<dyn std::error::Error>> {
+    ///
+    /// It requires a mutable Transcription instance because each [`status()`]
+    /// call. So you can use while loops to check for status updates
+    /// periodically.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use std::time::Duration;
+    /// use rust_ai::azure::{
+    ///     types::speech::Status,
+    ///     Speech,
+    /// };
+    /// let mut trans = Speech::new_transcription("Test".into()).create().await?;
+    ///
+    /// // Check transcription job status.
+    /// while [Status::Running, Status::NotStarted].contains(&trans.status().await?.status.clone().unwrap())
+    /// {
+    ///     std::thread::sleep(Duration::from_secs(2));
+    /// }
+    /// ```
+    pub async fn status(&mut self) -> Result<Transcription, Box<dyn std::error::Error>> {
         let text = request_get_endpoint(
             &SpeechServiceEndpoint::Get_Transcription_v3_1,
             None,
@@ -329,7 +364,11 @@ impl Transcription {
         .await?;
 
         return match serde_json::from_str::<Transcription>(&text) {
-            Ok(trans) => Ok(trans),
+            Ok(trans) => {
+                self.last_action_date_time = trans.last_action_date_time.clone();
+                self.status = trans.status.clone();
+                Ok(trans)
+            }
             Err(e) => {
                 warn!(target: "azure", "Unable to parse transcription status result: `{:#?}`", e);
                 match serde_json::from_str::<ErrorResponse>(&text) {
@@ -415,7 +454,8 @@ impl PaginatedFiles {
         }
     }
 
-    pub async fn report(self) -> Result<Option<TranscriptionReport>, Box<dyn std::error::Error>> {
+    /// Only obtain the report file from Azure container.
+    pub async fn report(&self) -> Result<Option<TranscriptionReport>, Box<dyn std::error::Error>> {
         if self.values.len() == 0 {
             return Ok(None);
         }
@@ -488,6 +528,64 @@ impl File {
                         Err(Box::new(e))
                     }
                 }
+            }
+        };
+    }
+
+    /// Obtain transcription result from Azure container.
+    ///
+    /// The result file is wrapped inside [`FileType`] and thus have multiple
+    /// variants.
+    pub async fn details(&self) -> Result<FileType, Box<dyn std::error::Error>> {
+        let text = request_get_endpoint(
+            &SpeechServiceEndpoint::None,
+            None,
+            Some(self.links.content_url.clone()),
+        )
+        .await?;
+
+        return match self.kind {
+            FileKind::TranscriptionReport => {
+                match serde_json::from_str::<TranscriptionReport>(&text) {
+                    Ok(report) => Ok(FileType::TranscriptionReport(report)),
+                    Err(e) => {
+                        warn!(target: "azure", "Unable to parse transcription result file: `{:#?}`", e);
+                        match serde_json::from_str::<ErrorResponse>(&text) {
+                            Ok(error) => {
+                                println!("{:#?}", error);
+                                error!(target: "azure", "Error from Azure: `{:?}`", e);
+                                Err(Box::new(e))
+                            }
+                            Err(e) => {
+                                error!(target: "azure", "Unable to parse error response: `{:?}`", e);
+                                Err(Box::new(e))
+                            }
+                        }
+                    }
+                }
+            }
+            FileKind::Transcription => match serde_json::from_str::<TranscriptionResult>(&text) {
+                Ok(report) => Ok(FileType::Transcription(report)),
+                Err(e) => {
+                    warn!(target: "azure", "Unable to parse transcription result file: `{:#?}`", e);
+                    match serde_json::from_str::<ErrorResponse>(&text) {
+                        Ok(error) => {
+                            println!("{:#?}", error);
+                            error!(target: "azure", "Error from Azure: `{:?}`", e);
+                            Err(Box::new(e))
+                        }
+                        Err(e) => {
+                            error!(target: "azure", "Unable to parse error response: `{:?}`", e);
+                            Err(Box::new(e))
+                        }
+                    }
+                }
+            },
+            _ => {
+                todo!(
+                    "Not yet supported file type `{}`",
+                    Into::<String>::into(self.kind.clone())
+                );
             }
         };
     }

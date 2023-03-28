@@ -198,7 +198,7 @@ impl Transcription {
 }
 
 /// Describe the current state of the API
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub enum Status {
     NotStarted,
     Running,
@@ -336,6 +336,15 @@ pub struct TranscriptionProperties {
     pub error: Option<EntityError>,
 }
 
+impl TranscriptionProperties {
+    pub fn display_form_word_level_timestamps_enabled(self, flag: bool) -> Self {
+        Self {
+            display_form_word_level_timestamps_enabled: Some(flag),
+            ..self
+        }
+    }
+}
+
 impl Default for TranscriptionProperties {
     fn default() -> Self {
         Self {
@@ -362,7 +371,6 @@ pub struct TranscriptionReport {
     pub successful_transcriptions_count: usize,
 
     #[serde(rename = "failedTranscriptionsCount")]
-    
     pub failed_transcriptions_count: usize,
     pub details: Vec<TranscriptionReportDetail>,
 }
@@ -371,4 +379,179 @@ pub struct TranscriptionReport {
 pub struct TranscriptionReportDetail {
     pub source: String,
     pub status: String,
+}
+
+
+/// 
+/// # Special Note for Callers
+/// Microsoft document mentioned `displayPhraseElements` properties but the 
+/// JSON schema doesn't provide an example of it. Same as some other props.
+/// 
+/// -   `displayPhraseElements`:
+///     
+///     A list of results with display text for each word of the phrase. The 
+///     `displayFormWordLevelTimestampsEnabled` request property must be set to 
+///     `true`, otherwise this property is not present.
+/// 
+///     Note: This property is only available with speech-to-text REST API 
+///     version 3.1.
+/// 
+/// -   `locale`:
+///     The locale identified from the input the audio. The 
+///     `languageIdentification` request property must be set, otherwise this 
+///     property is not present.
+/// 
+///     Note: This property is only available with speech-to-text REST API 
+///     version 3.1.
+/// 
+/// Source: <https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/batch-transcription-get?pivots=rest-api#transcription-result-file>
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct TranscriptionResult {
+    /// The URL that was provided as the input audio source. The source 
+    /// corresponds to the `contentUrls` or `contentContainerUrl` request 
+    /// property. The source property is the only way to confirm the audio 
+    /// input for a transcription.
+    pub source: String,
+
+    /// The creation date and time of the transcription. The value is an ISO 
+    /// 8601 encoded timestamp.
+    pub timestamp: String,
+
+    #[serde(rename = "durationInTicks")]
+    pub duration_in_ticks: u32,
+    pub duration: String,
+
+    /// The concatenated results of all phrases for the channel.
+    #[serde(rename = "combinedRecognizedPhrases")]
+    pub combined_recognized_phrases: Vec<CombinedRecognizedPhrases>,
+
+    /// The list of results for each phrase.
+    #[serde(rename = "recognizedPhrases")]
+    pub recognized_phrases: Vec<RecognizedPhrases>,
+}
+
+/// The concatenated results of all phrases for the channel.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct CombinedRecognizedPhrases {
+    /// The channel number of the results. For stereo audio streams, the left
+    /// and right channels are split during the transcription. A JSON result
+    /// file is created for each input audio file.
+    pub channel: usize,
+
+    /// The actual words recognized.
+    pub lexical: String,
+
+    /// The inverse text normalized (ITN) form of the recognized text. 
+    /// Abbreviations such as "Doctor Smith" to "Dr Smith", phone numbers, and 
+    /// other transformations are applied.
+    pub itn: String,
+
+    /// The ITN form with profanity masking applied.
+    #[serde(rename = "maskedITN")]
+    pub masked_itn: String,
+    pub display: String,
+}
+
+/// The list of results for each phrase.
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct RecognizedPhrases {
+    /// The recognition state. For example: "Success" or "Failure".
+    #[serde(rename = "recognitionStatus")]
+    pub recognition_status: String,
+
+    /// The identified speaker. The `diarization` and `diarizationEnabled` 
+    /// request properties must be set, otherwise this property is not present.
+    pub speaker: Option<usize>,
+    pub channel: usize,
+    pub offset: String,
+
+    /// The audio duration. The value is an ISO 8601 encoded duration.
+    pub duration: String,
+
+    #[serde(rename = "offsetInTicks")]
+    pub offset_in_ticks: f32,
+
+    /// The audio duration in ticks (1 tick is 100 nanoseconds).
+    #[serde(rename = "durationInTicks")]
+    pub duration_in_ticks: f32,
+
+    /// A list of possible transcriptions for the current phrase with 
+    /// confidences.
+    #[serde(rename = "nBest")]
+    pub n_best: Vec<TranscriptionWConfidence>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct TranscriptionWConfidence {
+    /// The confidence value for the recognition.
+    pub confidence: f32,
+
+    /// The actual words recognized.
+    pub lexical: String,
+
+    /// The inverse text normalized (ITN) form of the recognized text. 
+    /// Abbreviations such as "Doctor Smith" to "Dr Smith", phone numbers, and 
+    /// other transformations are applied.
+    pub itn: String,
+
+    /// The ITN form with profanity masking applied.
+    #[serde(rename = "maskedITN")]
+    pub masked_itn: String,
+
+    /// The display form of the recognized text. Added punctuation and
+    /// capitalization are included.
+    pub display: String,
+
+    /// A list of results with lexical text for each word of the phrase. 
+    /// The `wordLevelTimestampsEnabled` request property must be set to `true`,
+    /// otherwise this property is not present.
+    pub words: Option<Vec<Word>>,
+    
+    #[serde(rename = "displayWords")]
+    pub display_words: Option<Vec<DisplayWord>>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Word {
+    pub word: String,
+
+    /// The offset in audio of this phrase. The value is an ISO 8601 encoded 
+    /// duration.
+    pub offset: String,
+
+    /// The audio duration of word. The value is an ISO 8601 encoded duration.
+    pub duration: String,
+
+    /// The offset in audio of this phrase in ticks (1 tick is 100 nanoseconds).
+    #[serde(rename = "offsetInTicks")]
+    pub offset_in_ticks: f32,
+
+    /// The audio duration in ticks (1 tick is 100 nanoseconds).
+    #[serde(rename = "durationInTicks")]
+    pub duration_in_ticks: f32,
+
+    /// The confidence value for the recognition.
+    pub confidence: f32,
+}
+
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct DisplayWord {
+    #[serde(rename = "displayText")]    
+    pub display_text: String,
+
+    /// The offset in audio of this phrase. The value is an ISO 8601 encoded 
+    /// duration.
+    pub offset: String,
+
+    /// The audio duration of word. The value is an ISO 8601 encoded duration.
+    pub duration: String,
+
+    /// The offset in audio of this phrase in ticks (1 tick is 100 nanoseconds).
+    #[serde(rename = "offsetInTicks")]
+    pub offset_in_ticks: f32,
+
+    /// The audio duration in ticks (1 tick is 100 nanoseconds).
+    #[serde(rename = "durationInTicks")]
+    pub duration_in_ticks: f32,
 }

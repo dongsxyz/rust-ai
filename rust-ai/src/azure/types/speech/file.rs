@@ -2,6 +2,8 @@ use lazy_static::lazy_static;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 
+use super::transcription::{TranscriptionResult, TranscriptionReport};
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PaginatedFiles {
     pub values: Vec<File>,
@@ -143,4 +145,39 @@ pub struct FileProperties {
     /// as ISO 8601 duration ("PnYnMnDTnHnMnS", see https://en.wikipedia.org/wiki/ISO_8601#Durations).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<String>,
+}
+
+/// Unofficial type representation of transcription result. Each variant 
+/// contains correspondent data.
+pub enum FileType {
+    
+    // /// Type of data is dataset report.
+    // DatasetReport,
+
+    // /// Type of data is audio.
+    // Audio,
+
+    // /// Type of data is language data.
+    // LanguageData,
+
+    // /// Type of data is pronunciation data.
+    // PronunciationData,
+
+    // /// Type of data is acoustic data archive.
+    // AcousticDataArchive,
+
+    // /// Type of data is acoustic data transcription v2.
+   //  AcousticDataTranscriptionV2,
+
+    /// Type of data is transcription.
+    Transcription(TranscriptionResult),
+
+    /// Type of data is transcription report.
+    TranscriptionReport(TranscriptionReport),
+
+    // /// Type of data is evaluation details.
+    // EvaluationDetails,
+
+    // /// Type of data is model report.
+    // ModelReport,
 }
