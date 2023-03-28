@@ -926,7 +926,7 @@ dependencies = [
 
 [[package]]
 name = "rust-ai"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "isolang",
  "lazy_static",
@@ -944,7 +944,7 @@ dependencies = [
 
 [[package]]
 name = "rust-ai-azure-examples"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "log",
  "log4rs",
@@ -954,7 +954,7 @@ dependencies = [
 
 [[package]]
 name = "rust-ai-generator"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "chrono",
  "reqwest",

@@ -2,7 +2,7 @@
 name = "rust-ai-generator"
 authors = ["Zhongdong Yang"]
 description = "A tool to generate types for `rust-ai`"
-version = "0.1.8"
+version = "0.1.9"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/dongsxyz/rust-ai/"
