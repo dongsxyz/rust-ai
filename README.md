@@ -26,3 +26,4 @@ Examples located at `examples` directory, available targets:
   - `openai-image-variant`
 - Azure:
   - `azure-text-to-speech`
+  - `azure-batch-transcription`

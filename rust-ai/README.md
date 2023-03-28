@@ -29,7 +29,7 @@ Note:
 
 | Category          | Capability | Endpoint       |
 | :---------------- | :--------- | :------------- |
-| Cognitive service | Speech     | Text-to-Speech, Voice-List |
+| Cognitive service | Speech     | Text-to-Speech, Voice-List, Speech-to-Text (Batch) |
 
 Note: 
 - Azure CN is not supported by this repo yet.
