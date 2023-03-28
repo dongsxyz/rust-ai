@@ -6,7 +6,13 @@ use crate::azure::Locale;
 use lazy_static::lazy_static;
 use regex::Regex;
 
-use super::{entity::{EntityReference, EntityError}, mode::{PunctuationMode, ProfanityFilterMode}, diarization::DiarizationProperties, language::LanguageIdentificationProperties};
+use super::{
+    diarization::DiarizationProperties,
+    entity::{EntityError, EntityReference},
+    filter::FilterOperator,
+    language::LanguageIdentificationProperties,
+    mode::{ProfanityFilterMode, PunctuationMode},
+};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Transcription {
@@ -108,6 +114,32 @@ pub struct Transcription {
     /// Must be a valid date-time string
     #[serde(rename = "createdDateTime", skip_serializing_if = "Option::is_none")]
     pub created_date_time: Option<String>,
+
+    /// Format - int32. Number of datasets that will be skipped.
+    #[serde(skip)]
+    pub skip: Option<usize>,
+
+    /// Format - int32. Number of datasets that will be skipped.
+    #[serde(skip)]
+    pub top: Option<usize>,
+
+    /// A filtering expression for selecting a subset of the available files.
+    ///
+    /// -   **Supported properties**: name, createdDateTime, kind.
+    /// -   **Operators**:
+    ///     -   eq, ne are supported for all properties.
+    ///     -   gt, ge, lt, le are supported for createdDateTime.
+    ///     -   and, or, not are supported.
+    /// -   **Example**: `filter=name eq 'myaudio.wav.json' and kind eq 'Transcription'`
+    #[serde(skip)]
+    pub filter: Option<FilterOperator>,
+
+    /// Format - int32. The duration in seconds that an SAS url should be
+    /// valid. The default duration is 12 hours. When using BYOS (https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/speech-encryption-of-data-at-rest#bring-your-own-storage-byos-for-customization-and-logging):
+    /// A value of 0 means that a plain blob URI without SAS token will be
+    /// generated.
+    #[serde(skip)]
+    pub sas_validity_in_seconds: Option<u32>,
 }
 
 impl Into<String> for Transcription {
@@ -134,6 +166,10 @@ impl Default for Transcription {
             last_action_date_time: None,
             status: None,
             created_date_time: None,
+            skip: None,
+            top: None,
+            filter: None,
+            sas_validity_in_seconds: None,
         }
     }
 }

@@ -29,6 +29,8 @@
 //!
 //! For use of styles and roles, see [docs/azure-voices-n-roles.md](https://github.com/dongsxyz/rust-ai/blob/master/docs/azure-voices-n-roles.md).
 
+use std::collections::HashMap;
+
 use log::{error, warn};
 use reqwest::header::HeaderMap;
 
@@ -39,12 +41,18 @@ use crate::azure::{
     },
     types::{
         common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType},
-        speech::{health::ServiceHealth, filter::FilterOperator, transcription::{Transcription, Status}, ErrorResponse, file::PaginatedFiles
-            
+        speech::{
+            entity::EntityReference,
+            file::PaginatedFiles,
+            filter::FilterOperator,
+            health::ServiceHealth,
+            transcription::{Status, Transcription},
+            ErrorResponse,
         },
         tts::Voice,
         SSML,
     },
+    Locale,
 };
 
 /// The Speech service allows you to convert text into synthesized speech and
@@ -76,6 +84,10 @@ impl From<SSML> for Speech {
 }
 
 impl Speech {
+    pub fn new_transcription(display_name: String) -> Transcription {
+        Transcription::default().display_name(display_name)
+    }
+
     pub fn format(self, f: MicrosoftOutputFormat) -> Self {
         Self {
             output_format: f,
@@ -157,31 +169,7 @@ impl Speech {
     }
 }
 
-/// TODO: remove `allow(dead_code)` when `models()` implemented.
-#[allow(dead_code)]
-pub struct SpeechModel {
-    model_id: Option<String>,
-
-    skip: Option<usize>,
-    top: Option<usize>,
-    filter: Option<FilterOperator>,
-
-    transcription: Option<Transcription>,
-}
-
-impl Default for SpeechModel {
-    fn default() -> Self {
-        Self {
-            model_id: None,
-            skip: None,
-            top: None,
-            filter: None,
-            transcription: None,
-        }
-    }
-}
-
-impl SpeechModel {
+impl Transcription {
     pub fn skip(self, skip: usize) -> Self {
         Self {
             skip: Some(skip),
@@ -201,18 +189,62 @@ impl SpeechModel {
         }
     }
 
-    pub fn id(self, id: String) -> Self {
+    pub fn sas_validity_in_seconds(self, sec: u32) -> Self {
         Self {
-            model_id: Some(id),
+            sas_validity_in_seconds: Some(sec),
             ..self
         }
     }
 
-    pub fn transcription(self, transcription: Transcription) -> Self {
+    pub fn model(self, model: String) -> Self {
         Self {
-            transcription: Some(transcription),
+            model: Some(EntityReference::from(model)),
             ..self
         }
+    }
+
+    pub fn content_container_url(self, url: String) -> Self {
+        Self {
+            content_container_url: Some(url),
+            ..self
+        }
+    }
+    pub fn content_urls(self, urls: Vec<String>) -> Self {
+        Self {
+            content_urls: Some(urls),
+            ..self
+        }
+    }
+
+    pub fn project(self, project: String) -> Self {
+        Self {
+            project: Some(EntityReference::from(project)),
+            ..self
+        }
+    }
+
+    pub fn set_self(self, _self: String) -> Self {
+        Self {
+            _self: Some(_self),
+            ..self
+        }
+    }
+
+    /// Change display name of current transcription job.
+    ///
+    /// No effect after transcription submitted.
+    pub fn display_name(self, display_name: String) -> Self {
+        Self {
+            display_name,
+            ..self
+        }
+    }
+
+    /// Change default locale of this transcription job.
+    ///
+    /// No effect after transcription submitted.
+    pub fn locale(self, locale: Locale) -> Self {
+        Self { locale, ..self }
     }
 
     /// [Custom Speech]
@@ -252,50 +284,45 @@ impl SpeechModel {
         // Ok(())
     }
 
-    pub async fn create_transcription(self) -> Result<Transcription, Box<dyn std::error::Error>> {
-        return if let Some(transcription) = self.transcription {
-            if let ResponseType::Text(text) = request_post_endpoint(
-                &SpeechServiceEndpoint::Post_Batch_Transcriptions_v3_1,
-                transcription,
-                ResponseExpectation::Text,
-                None,
-            )
-            .await?
-            {
-                return match serde_json::from_str::<Transcription>(&text) {
-                    Ok(trans) => Ok(trans),
-                    Err(e) => {
-                        warn!(target: "azure", "Unable to parse transcription creation result: `{:#?}`", e);
-                        match serde_json::from_str::<ErrorResponse>(&text) {
-                            Ok(error) => {
-                                println!("{:#?}", error);
-                                error!(target: "azure", "Error from Azure: `{:?}`", e);
-                                Err(Box::new(e))
-                            }
-                            Err(e) => {
-                                error!(target: "azure", "Unable to parse error response: `{:?}`", e);
-                                Err(Box::new(e))
-                            }
+    /// Create a new audio transcription job.
+    pub async fn create(self) -> Result<Transcription, Box<dyn std::error::Error>> {
+        return if let ResponseType::Text(text) = request_post_endpoint(
+            &SpeechServiceEndpoint::Post_Create_Transcription_v3_1,
+            self,
+            ResponseExpectation::Text,
+            None,
+        )
+        .await?
+        {
+            return match serde_json::from_str::<Transcription>(&text) {
+                Ok(trans) => Ok(trans),
+                Err(e) => {
+                    warn!(target: "azure", "Unable to parse transcription creation result: `{:#?}`", e);
+                    match serde_json::from_str::<ErrorResponse>(&text) {
+                        Ok(error) => {
+                            println!("{:#?}", error);
+                            error!(target: "azure", "Error from Azure: `{:?}`", e);
+                            Err(Box::new(e))
+                        }
+                        Err(e) => {
+                            error!(target: "azure", "Unable to parse error response: `{:?}`", e);
+                            Err(Box::new(e))
                         }
                     }
-                };
-            } else {
-                Err("Unable to load output from Azure speech service endpoint".into())
-            }
+                }
+            };
         } else {
-            Err("You need to call `transcription()` before create on Azure".into())
+            Err("Unable to load output from Azure speech service endpoint".into())
         };
     }
-}
 
-impl Transcription {
     /// Check transcription status
     ///
     /// This will only succeed when you've submitted the initial batch create
     /// request to Azure endpoint.
     pub async fn status(self) -> Result<Transcription, Box<dyn std::error::Error>> {
         let text = request_get_endpoint(
-            &SpeechServiceEndpoint::Get_Transcription_Status_v3_1,
+            &SpeechServiceEndpoint::Get_Transcription_v3_1,
             None,
             Some(self.transcription_id().unwrap()),
         )
@@ -321,7 +348,7 @@ impl Transcription {
     }
 
     /// Get batch transcription result from Azure endpoint
-    pub async fn results(self) -> Result<PaginatedFiles, Box<dyn std::error::Error>> {
+    pub async fn files(self) -> Result<PaginatedFiles, Box<dyn std::error::Error>> {
         if let None = self.status.clone() {
             return Err("You should submit the create request first.".into());
         } else {
@@ -335,9 +362,23 @@ impl Transcription {
             }
         }
 
+        let mut params = HashMap::<String, String>::new();
+        if let Some(sas) = self.sas_validity_in_seconds.clone() {
+            params.insert("sasValidityInSeconds".into(), sas.to_string());
+        }
+        if let Some(skip) = self.skip.clone() {
+            params.insert("skip".into(), skip.to_string());
+        }
+        if let Some(top) = self.top.clone() {
+            params.insert("top".into(), top.to_string());
+        }
+        if let Some(filter) = self.filter.clone() {
+            params.insert("filter".into(), filter.to_string());
+        }
+
         let text = request_get_endpoint(
-            &SpeechServiceEndpoint::Get_Transcription_Results_v3_1,
-            None,
+            &SpeechServiceEndpoint::Get_Transcription_Files_v3_1,
+            Some(params),
             Some(format!("{}/files", self.transcription_id().unwrap())),
         )
         .await?;

@@ -19,7 +19,7 @@ pub mod apis;
 /// Azure types definition
 pub mod types;
 
-pub use apis::speech::{Speech, SpeechModel};
+pub use apis::speech::Speech;
 pub use types::ssml;
 pub use types::Gender;
 pub use types::Locale;

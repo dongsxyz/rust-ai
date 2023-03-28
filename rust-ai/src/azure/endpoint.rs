@@ -18,9 +18,9 @@ pub enum SpeechServiceEndpoint {
     Post_Text_to_Speech_v1,
     Get_Speech_to_Text_Health_Status_v3_1,
     Get_List_of_Models_v3_1,
-    Post_Batch_Transcriptions_v3_1,
-    Get_Transcription_Status_v3_1,
-    Get_Transcription_Results_v3_1,
+    Post_Create_Transcription_v3_1,
+    Get_Transcription_v3_1,
+    Get_Transcription_Files_v3_1,
 }
 
 impl SpeechServiceEndpoint {
@@ -46,17 +46,17 @@ impl SpeechServiceEndpoint {
                 region
             ),
 
-            Self::Post_Batch_Transcriptions_v3_1 => format!(
+            Self::Post_Create_Transcription_v3_1 => format!(
                 "https://{}.api.cognitive.microsoft.com/speechtotext/v3.1/transcriptions",
                 region
             ),
 
-            Self::Get_Transcription_Status_v3_1 => format!(
+            Self::Get_Transcription_v3_1 => format!(
                 "https://{}.api.cognitive.microsoft.com/speechtotext/v3.1/transcriptions/",
                 region
             ),
             
-            Self::Get_Transcription_Results_v3_1 => format!(
+            Self::Get_Transcription_Files_v3_1 => format!(
                 "https://{}.api.cognitive.microsoft.com/speechtotext/v3.1/transcriptions/",
                 region
             ),

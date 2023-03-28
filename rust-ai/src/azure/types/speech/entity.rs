@@ -14,6 +14,18 @@ pub struct EntityReference {
     pub _self: String,
 }
 
+impl From<String> for EntityReference {
+    fn from(value: String) -> Self {
+        Self { _self: value }
+    }
+}
+
+impl EntityReference {
+    pub fn from(s: String) -> Self {
+        Self { _self: s }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct EntityError {
     /// The code of this error.
