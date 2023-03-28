@@ -39,9 +39,8 @@ use crate::azure::{
     },
     types::{
         common::{MicrosoftOutputFormat, ResponseExpectation, ResponseType},
-        speech::{
-            transcription::{PaginatedFiles, Status, Transcription},
-            ErrorResponse, FilterOperator, ServiceHealthResponse,
+        speech::{health::ServiceHealth, filter::FilterOperator, transcription::{Transcription, Status}, ErrorResponse, file::PaginatedFiles
+            
         },
         tts::Voice,
         SSML,
@@ -112,7 +111,7 @@ impl Speech {
     /// and sub-components.
     ///
     /// V3.1 API supported only.
-    pub async fn health_check() -> Result<ServiceHealthResponse, Box<dyn std::error::Error>> {
+    pub async fn health_check() -> Result<ServiceHealth, Box<dyn std::error::Error>> {
         let text = request_get_endpoint(
             &SpeechServiceEndpoint::Get_Speech_to_Text_Health_Status_v3_1,
             None,
@@ -120,7 +119,7 @@ impl Speech {
         )
         .await?;
 
-        match serde_json::from_str::<ServiceHealthResponse>(&text) {
+        match serde_json::from_str::<ServiceHealth>(&text) {
             Ok(status) => Ok(status),
             Err(e) => {
                 warn!(target: "azure", "Error parsing response: {:?}", e);
@@ -342,8 +341,6 @@ impl Transcription {
             Some(format!("{}/files", self.transcription_id().unwrap())),
         )
         .await?;
-
-        println!("{}", text);
 
         return match serde_json::from_str::<PaginatedFiles>(&text) {
             Ok(files) => Ok(files),
