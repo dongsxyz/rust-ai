@@ -4,9 +4,9 @@
 //! Provide configuration related types and functions/methods.
 //!
 //! Note: `config.yml` must locate in your current working directory.
-//! 
+//!
 //! ## Example
-//! 
+//!
 //! ```yaml
 //! openai:
 //!   api_key: sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -79,6 +79,17 @@ impl Config {
 pub struct OpenAi {
     /// API key obtained from <https://openai.com>.
     pub api_key: String,
+
+    /// Alternative base endpoint for OpenAI.
+    pub base_endpoint: Option<String>,
+}
+
+impl OpenAi {
+    pub fn base_endpoint(&self) -> String {
+        self.base_endpoint
+            .clone()
+            .unwrap_or("https://api.openai.com".to_string())
+    }
 }
 
 /// A mapping for Azure (Global) configuration contents

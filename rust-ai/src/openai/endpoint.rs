@@ -171,9 +171,9 @@ where
     let client = reqwest::Client::new();
     let config = Config::load().unwrap();
     let url = if let EndpointVariant::Extended(var) = variant {
-        format!("https://api.openai.com{}{}", endpoint, var.to_owned())
+        format!("{}{}{}", config.openai.base_endpoint(), endpoint, var.to_owned())
     } else {
-        format!("https://api.openai.com{}", endpoint)
+        format!("{}{}", config.openai.base_endpoint(), endpoint)
     };
 
     let mut req = client.post(url);
@@ -212,9 +212,9 @@ where
     let client = reqwest::Client::new();
     let config = Config::load().unwrap();
     let url = if let EndpointVariant::Extended(var) = variant {
-        format!("https://api.openai.com{}{}", endpoint, var.to_owned())
+        format!("{}{}{}", config.openai.base_endpoint(), endpoint, var.to_owned())
     } else {
-        format!("https://api.openai.com{}", endpoint)
+        format!("{}{}", config.openai.base_endpoint(), endpoint)
     };
 
     let mut req = client.post(url);
@@ -253,9 +253,9 @@ where
     let client = reqwest::Client::new();
     let config = Config::load().unwrap();
     let url = if let EndpointVariant::Extended(var) = variant {
-        format!("https://api.openai.com{}{}", endpoint, var.to_owned())
+        format!("{}{}{}", config.openai.base_endpoint(), endpoint, var.to_owned())
     } else {
-        format!("https://api.openai.com{}", endpoint)
+        format!("{}{}", config.openai.base_endpoint(), endpoint)
     };
 
     let mut req = client.post(url);
