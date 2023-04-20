@@ -28,54 +28,54 @@ use serde_with::serde_as;
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Completion {
-    model: Model,
+    pub model: Model,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    prompt: Option<Vec<String>>,
+    pub prompt: Option<Vec<String>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    stream: Option<bool>,
+    pub stream: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    suffix: Option<String>,
+    pub suffix: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    temperature: Option<f32>,
+    pub temperature: Option<f32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    top_p: Option<f32>,
+    pub top_p: Option<f32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    n: Option<u32>,
+    pub n: Option<u32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    logprobs: Option<u32>,
+    pub logprobs: Option<u32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    echo: Option<Vec<bool>>,
+    pub echo: Option<Vec<bool>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    stop: Option<Vec<String>>,
+    pub stop: Option<Vec<String>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    max_tokens: Option<u32>,
+    pub max_tokens: Option<u32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    presence_penalty: Option<f32>,
+    pub presence_penalty: Option<f32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    frequency_penalty: Option<f32>,
-
-    #[serde_as(as = "Option<Vec<(_,_)>>")]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    best_of: Option<HashMap<String, u32>>,
+    pub frequency_penalty: Option<f32>,
 
     #[serde_as(as = "Option<Vec<(_,_)>>")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    logit_bias: Option<HashMap<String, f32>>,
+    pub best_of: Option<HashMap<String, u32>>,
+
+    #[serde_as(as = "Option<Vec<(_,_)>>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub logit_bias: Option<HashMap<String, f32>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    user: Option<String>,
+    pub user: Option<String>,
 }
 
 impl Default for Completion {

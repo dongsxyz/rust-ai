@@ -19,21 +19,21 @@ use serde_with::serde_as;
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Edit {
-    model: Model,
+    pub model: Model,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    input: Option<String>,
+    pub input: Option<String>,
 
-    instruction: String,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    temperature: Option<f32>,
+    pub instruction: String,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    top_p: Option<f32>,
+    pub temperature: Option<f32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    n: Option<u32>,
+    pub top_p: Option<f32>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub n: Option<u32>,
 }
 
 impl Default for Edit {

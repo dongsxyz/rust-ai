@@ -25,40 +25,40 @@ use serde_with::serde_as;
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ChatCompletion {
-    model: Model,
+    pub model: Model,
 
-    messages: Vec<ChatMessage>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    stream: Option<bool>,
+    pub messages: Vec<ChatMessage>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    temperature: Option<f32>,
+    pub stream: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    top_p: Option<f32>,
+    pub temperature: Option<f32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    n: Option<u32>,
+    pub top_p: Option<f32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    stop: Option<Vec<String>>,
+    pub n: Option<u32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    max_tokens: Option<u32>,
+    pub stop: Option<Vec<String>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    presence_penalty: Option<f32>,
+    pub max_tokens: Option<u32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    frequency_penalty: Option<f32>,
+    pub presence_penalty: Option<f32>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub frequency_penalty: Option<f32>,
 
     #[serde_as(as = "Option<Vec<(_,_)>>")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    logit_bias: Option<HashMap<String, f32>>,
+    pub logit_bias: Option<HashMap<String, f32>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    user: Option<String>,
+    pub user: Option<String>,
 }
 
 impl Default for ChatCompletion {

@@ -19,12 +19,12 @@ use serde_with::serde_as;
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Embedding {
-    model: Model,
+    pub model: Model,
 
-    input: String,
+    pub input: String,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    user: Option<String>,
+    pub user: Option<String>,
 }
 
 impl Default for Embedding {

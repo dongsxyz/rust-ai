@@ -21,9 +21,9 @@ use serde_with::serde_as;
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Moderation {
-    model: Model,
+    pub model: Model,
 
-    input: Vec<String>,
+    pub input: Vec<String>,
 }
 
 impl Default for Moderation {

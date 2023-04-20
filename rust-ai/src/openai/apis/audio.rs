@@ -23,11 +23,11 @@ use reqwest::multipart::{Form, Part};
 /// of the prompt.
 #[derive(Debug)]
 pub struct Audio {
-    model: Model,
-    prompt: Option<String>,
-    response_format: Option<Format>,
-    temperature: Option<f32>,
-    language: Option<Language>,
+    pub model: Model,
+    pub prompt: Option<String>,
+    pub response_format: Option<Format>,
+    pub temperature: Option<f32>,
+    pub language: Option<Language>,
 }
 
 impl Default for Audio {

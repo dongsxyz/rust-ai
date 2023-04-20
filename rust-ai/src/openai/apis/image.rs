@@ -28,25 +28,25 @@ use serde_with::serde_as;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Image {
     #[serde(skip)]
-    image: Option<(String, Vec<u8>)>,
+    pub image: Option<(String, Vec<u8>)>,
 
     #[serde(skip)]
-    mask: Option<(String, Vec<u8>)>,
+    pub mask: Option<(String, Vec<u8>)>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    prompt: Option<String>,
+    pub prompt: Option<String>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    n: Option<u32>,
+    pub n: Option<u32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    size: Option<Size>,
+    pub size: Option<Size>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    response_format: Option<Format>,
+    pub response_format: Option<Format>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    user: Option<String>,
+    pub user: Option<String>,
 }
 
 impl Default for Image {
