@@ -5,6 +5,19 @@ use rust_ai::openai::{types::chat_completion::MessageRole, ChatCompletion};
 async fn main() -> Result<(), Box<dyn Error>> {
     std::env::set_var("RUST_LOG", "info");
     std::env::set_var("RUST_BACKTRACE", "1");
+    std::env::set_var(
+        "RUST_AI_CONFIG",
+        String::from(
+            r#"
+openai:
+  api_key: sk-
+  base_endpoint: https://api.openai.com
+azure:
+  speech:
+    key: 
+    region: westus"#,
+        ),
+    );
     log4rs::init_file("log4rs.yml", Default::default()).unwrap();
 
     let result = ChatCompletion::default()

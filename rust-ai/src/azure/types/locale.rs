@@ -3,7 +3,7 @@
 //! 
 //! Locale names fetched from Microsoft Cognitive Services API.
 //! 
-//! Updated on 2023-03-27.
+//! Updated on 2023-04-20.
 
 ////////////////////////////////////////////////////////////////////////////////
 

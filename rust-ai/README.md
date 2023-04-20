@@ -41,11 +41,14 @@ Create a `config.yml` in your working directory, or root of this crate. Contents
 ```yaml
 openai:
   api_key: sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  base_endpoint: https://api.openai.com
 azure:
   speech:
     key: 4c7eXXXXXXXXXXXXXXXXXXXXXXX54c32
     region: westus
 ```
+
+If you prefer to load configuration from environment variables, set the contents to `RUST_AI_CONFIG` like example `chat-completion-streamed` does.
 
 [^note_1]: `dall-e` is an hypothetical name of the unknown model. Currently, OpenAI doesn't support manually specify model for image related tasks. So DALL·E models are not valid variants of `Model` enum.
 

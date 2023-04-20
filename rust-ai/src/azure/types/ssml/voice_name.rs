@@ -3,7 +3,7 @@
 //! 
 //! Voice names fetched from Microsoft Cognitive Services API.
 //! 
-//! Updated on 2023-03-27.
+//! Updated on 2023-04-20.
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -443,6 +443,9 @@ pub enum VoiceName {
 
     /// Voice name variant for `en-US-NancyNeural`
     en_US_NancyNeural,
+
+    /// Voice name variant for `en-US-RogerNeural`
+    en_US_RogerNeural,
 
     /// Voice name variant for `en-US-SaraNeural`
     en_US_SaraNeural,
@@ -1501,6 +1504,7 @@ impl Into<String> for VoiceName {
             Self::en_US_MichelleNeural => "en-US-MichelleNeural",
             Self::en_US_MonicaNeural => "en-US-MonicaNeural",
             Self::en_US_NancyNeural => "en-US-NancyNeural",
+            Self::en_US_RogerNeural => "en-US-RogerNeural",
             Self::en_US_SaraNeural => "en-US-SaraNeural",
             Self::en_US_SteffanNeural => "en-US-SteffanNeural",
             Self::en_US_TonyNeural => "en-US-TonyNeural",
