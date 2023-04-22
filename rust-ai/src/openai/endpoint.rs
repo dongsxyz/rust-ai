@@ -12,9 +12,8 @@ use log::{debug, error, warn};
 use reqwest::multipart::Form;
 use serde::Serialize;
 
-use crate::utils::config::Config;
-
 use super::types::model::Model;
+use crate::utils::{config::Config, header::AdditionalHeaders};
 
 /// Check if selected model is available to certain API endpoint
 ///
@@ -171,13 +170,30 @@ where
     let client = reqwest::Client::new();
     let config = Config::load().unwrap();
     let url = if let EndpointVariant::Extended(var) = variant {
-        format!("{}{}{}", config.openai.base_endpoint(), endpoint, var.to_owned())
+        format!(
+            "{}{}{}",
+            config.openai.base_endpoint(),
+            endpoint,
+            var.to_owned()
+        )
     } else {
         format!("{}{}", config.openai.base_endpoint(), endpoint)
     };
 
     let mut req = client.post(url);
+
+    // Load additional headers from environment variable
+    let headers = AdditionalHeaders::from_var().provide();
+    if headers.len() > 0 {
+        req = req.headers(headers);
+    }
+
     req = req.header("Authorization", format!("Bearer {}", config.openai.api_key));
+
+    if let Some(req_clone) = req.try_clone() {
+        log::debug!(target: "requests", "Headers `{:?}`", req_clone.build().unwrap().headers());
+    };
+
 
     let res = req.json(&json).send().await?;
 
@@ -212,13 +228,30 @@ where
     let client = reqwest::Client::new();
     let config = Config::load().unwrap();
     let url = if let EndpointVariant::Extended(var) = variant {
-        format!("{}{}{}", config.openai.base_endpoint(), endpoint, var.to_owned())
+        format!(
+            "{}{}{}",
+            config.openai.base_endpoint(),
+            endpoint,
+            var.to_owned()
+        )
     } else {
         format!("{}{}", config.openai.base_endpoint(), endpoint)
     };
 
     let mut req = client.post(url);
+
+    // Load additional headers from environment variable
+    let headers = AdditionalHeaders::from_var().provide();
+    if headers.len() > 0 {
+        req = req.headers(headers);
+    }
+
     req = req.header("Authorization", format!("Bearer {}", config.openai.api_key));
+
+    if let Some(req_clone) = req.try_clone() {
+        log::debug!(target: "requests", "Headers `{:?}`", req_clone.build().unwrap().headers());
+    };
+
 
     let mut res = req.json(&json).send().await?;
 
@@ -253,13 +286,30 @@ where
     let client = reqwest::Client::new();
     let config = Config::load().unwrap();
     let url = if let EndpointVariant::Extended(var) = variant {
-        format!("{}{}{}", config.openai.base_endpoint(), endpoint, var.to_owned())
+        format!(
+            "{}{}{}",
+            config.openai.base_endpoint(),
+            endpoint,
+            var.to_owned()
+        )
     } else {
         format!("{}{}", config.openai.base_endpoint(), endpoint)
     };
 
     let mut req = client.post(url);
+
+    // Load additional headers from environment variable
+    let headers = AdditionalHeaders::from_var().provide();
+    if headers.len() > 0 {
+        req = req.headers(headers);
+    }
+
     req = req.header("Authorization", format!("Bearer {}", config.openai.api_key));
+
+    if let Some(req_clone) = req.try_clone() {
+        log::debug!(target: "requests", "Headers `{:?}`", req_clone.build().unwrap().headers());
+    };
+
     let res = req.multipart(form).send().await?;
 
     if let Ok(text) = res.text().await {

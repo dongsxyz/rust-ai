@@ -1,9 +1,12 @@
 use std::error::Error;
 
-use rust_ai::openai::{types::chat_completion::MessageRole, ChatCompletion};
+use rust_ai::{
+    openai::{types::chat_completion::MessageRole, ChatCompletion},
+    utils::header::AdditionalHeaders,
+};
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    std::env::set_var("RUST_LOG", "info");
+    std::env::set_var("RUST_LOG", "debug");
     std::env::set_var("RUST_BACKTRACE", "1");
     std::env::set_var(
         "RUST_AI_CONFIG",
@@ -19,6 +22,11 @@ azure:
         ),
     );
     log4rs::init_file("log4rs.yml", Default::default()).unwrap();
+
+    // Set additional headers
+    let mut headers = AdditionalHeaders::default();
+    headers.set_header(("rust", "test"));
+    headers.to_var();
 
     let result = ChatCompletion::default()
     .message(

@@ -7,3 +7,6 @@
 
 /// Configuration file related functions
 pub mod config;
+
+/// Header helper functions and types or crates
+pub mod header;
