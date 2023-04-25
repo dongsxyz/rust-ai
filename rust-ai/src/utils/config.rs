@@ -54,7 +54,6 @@ impl Config {
     /// Load contents from local config file.
     pub fn load() -> Result<Self, Box<dyn std::error::Error>> {
         if let Ok(config_contents) = std::env::var("RUST_AI_CONFIG") {
-            println!("Config: {:?}", config_contents);
             return match serde_yaml::from_str(&config_contents) {
                 Ok(config) => Ok(config),
                 Err(e) => {

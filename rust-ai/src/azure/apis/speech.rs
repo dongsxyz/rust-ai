@@ -313,8 +313,7 @@ impl Transcription {
                 Err(e) => {
                     warn!(target: "azure", "Unable to parse transcription creation result: `{:#?}`", e);
                     match serde_json::from_str::<ErrorResponse>(&text) {
-                        Ok(error) => {
-                            println!("{:#?}", error);
+                        Ok(e) => {
                             error!(target: "azure", "Error from Azure: `{:?}`", e);
                             Err(Box::new(e))
                         }
@@ -372,8 +371,7 @@ impl Transcription {
             Err(e) => {
                 warn!(target: "azure", "Unable to parse transcription status result: `{:#?}`", e);
                 match serde_json::from_str::<ErrorResponse>(&text) {
-                    Ok(error) => {
-                        println!("{:#?}", error);
+                    Ok(e) => {
                         error!(target: "azure", "Error from Azure: `{:?}`", e);
                         Err(Box::new(e))
                     }
@@ -427,8 +425,7 @@ impl Transcription {
             Err(e) => {
                 warn!(target: "azure", "Unable to parse transcription files list result: `{:#?}`", e);
                 match serde_json::from_str::<ErrorResponse>(&text) {
-                    Ok(error) => {
-                        println!("{:#?}", error);
+                    Ok(e) => {
                         error!(target: "azure", "Error from Azure: `{:?}`", e);
                         Err(Box::new(e))
                     }
@@ -478,8 +475,7 @@ impl PaginatedFiles {
                 Err(e) => {
                     warn!(target: "azure", "Unable to parse transcription result file: `{:#?}`", e);
                     match serde_json::from_str::<ErrorResponse>(&text) {
-                        Ok(error) => {
-                            println!("{:#?}", error);
+                        Ok(e) => {
                             error!(target: "azure", "Error from Azure: `{:?}`", e);
                             Err(Box::new(e))
                         }
@@ -518,8 +514,7 @@ impl File {
             Err(e) => {
                 warn!(target: "azure", "Unable to parse transcription result file: `{:#?}`", e);
                 match serde_json::from_str::<ErrorResponse>(&text) {
-                    Ok(error) => {
-                        println!("{:#?}", error);
+                    Ok(e) => {
                         error!(target: "azure", "Error from Azure: `{:?}`", e);
                         Err(Box::new(e))
                     }
@@ -551,8 +546,7 @@ impl File {
                     Err(e) => {
                         warn!(target: "azure", "Unable to parse transcription result file: `{:#?}`", e);
                         match serde_json::from_str::<ErrorResponse>(&text) {
-                            Ok(error) => {
-                                println!("{:#?}", error);
+                            Ok(e) => {
                                 error!(target: "azure", "Error from Azure: `{:?}`", e);
                                 Err(Box::new(e))
                             }
@@ -569,8 +563,7 @@ impl File {
                 Err(e) => {
                     warn!(target: "azure", "Unable to parse transcription result file: `{:#?}`", e);
                     match serde_json::from_str::<ErrorResponse>(&text) {
-                        Ok(error) => {
-                            println!("{:#?}", error);
+                        Ok(e) => {
                             error!(target: "azure", "Error from Azure: `{:?}`", e);
                             Err(Box::new(e))
                         }
