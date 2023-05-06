@@ -42,6 +42,7 @@ Create a `config.yml` in your working directory, or root of this crate. Contents
 ```yaml
 openai:
   api_key: sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  org_id: org-xxx
   base_endpoint: https://api.openai.com
 azure:
   speech:
