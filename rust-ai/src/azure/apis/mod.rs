@@ -6,16 +6,24 @@
 //! 
 //! # Example 
 //! 
-//! ```rust
-//! use rust_ai::azure::{MicrosoftOutputFormat, Speech, VoiceName};
+//! ```rust, ignore
+//! use rust_ai::azure::{ssml::Speak, Locale, Speech, VoiceName, SSML};
 //! 
-//! let result = Speech::default()
-//! .voice(VoiceName::zh_CN_YunfengNeural)
-//! .format(MicrosoftOutputFormat::Audio_24khz_48kbitrate_Mono_Mp3)
-//! .tts(r#"美丽中国，大好河山欢迎您！"#.into())
-//! .await?;
-//! 
-//! std::fs::write(PathBuf::from(r"D:\Contents\Downloads\output.mp3"), result).unwrap();
+//! #[tokio::main]
+//! async fn main() -> tokio::io::Result<()> {
+//!   let ssml = SSML::from(
+//!     Speak::voice_content(
+//!       VoiceName::zh_CN_YunhaoNeural,
+//!       "亲爱的朋友，美丽中国欢迎你！",
+//!     )
+//!     .lang(Locale::zh_CN),
+//!   );
+//!   
+//!   let result = Speech::from(ssml).tts().await.unwrap();
+//!   
+//!   std::fs::write(std::path::PathBuf::from(r"D:\Contents\Downloads\output.mp3"), result).unwrap();
+//!   Ok(())
+//! }
 //! ```
 
 ////////////////////////////////////////////////////////////////////////////////

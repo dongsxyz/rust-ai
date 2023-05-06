@@ -340,18 +340,22 @@ impl Transcription {
     ///
     /// # Example
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use std::time::Duration;
     /// use rust_ai::azure::{
     ///     types::speech::Status,
     ///     Speech,
     /// };
-    /// let mut trans = Speech::new_transcription("Test".into()).create().await?;
-    ///
-    /// // Check transcription job status.
-    /// while [Status::Running, Status::NotStarted].contains(&trans.status().await?.status.clone().unwrap())
-    /// {
-    ///     std::thread::sleep(Duration::from_secs(2));
+    /// 
+    /// #[tokio::main]
+    /// async fn main() -> tokio::io::Result<()> {
+    ///   let mut trans = Speech::new_transcription("Test".into()).create().await.unwrap();
+    ///   // Check transcription job status.
+    ///   while [Status::Running, Status::NotStarted].contains(&trans.status().await.unwrap().status.clone().unwrap())
+    ///   {
+    ///       std::thread::sleep(Duration::from_secs(2));
+    ///   }
+    ///   Ok(())
     /// }
     /// ```
     pub async fn status(&mut self) -> Result<Transcription, Box<dyn std::error::Error>> {

@@ -7,6 +7,7 @@
 //! # Example
 //! 
 //! ```rust
+//! use rust_ai::azure::types::{ssml::{SSML, voice_name::VoiceName, Speak}, Locale};
 //! let ssml = SSML::from(
 //!    Speak::voice_content(
 //!        VoiceName::zh_CN_YunhaoNeural,

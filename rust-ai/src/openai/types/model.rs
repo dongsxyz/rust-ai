@@ -131,8 +131,18 @@ pub enum Model {
     /// | MAX TOKENS  | TRAINING DATA  | SERIES |
     /// | :---------- | :------------- | :----- |
     /// | 8001 tokens | Up to Jun 2021 | Codex  |
+    #[deprecated(note = "The Codex models are now deprecated.")]
     #[serde(rename = "code-davinci-002")]
     CODE_DAVINCI_002,
+
+    /// Earlier version of `code-davinci-002`
+    ///
+    /// | MAX TOKENS  | TRAINING DATA  | SERIES |
+    /// | :---------- | :------------- | :----- |
+    /// | 8001 tokens | Up to Jun 2021 | Codex  |
+    #[deprecated(note = "The Codex models are now deprecated.")]
+    #[serde(rename = "code-davinci-001")]
+    CODE_DAVINCI_001,
 
     /// Almost as capable as Davinci Codex, but slightly faster. This speed
     /// advantage may make it preferable for real-time applications.
@@ -140,6 +150,16 @@ pub enum Model {
     /// | MAX TOKENS  | TRAINING DATA  | SERIES |
     /// | :---------- | :------------- | :----- |
     /// | 2048 tokens | -              | Codex  |
+    #[deprecated(note = "The Codex models are now deprecated.")]
+    #[serde(rename = "code-cushman-002")]
+    CODE_CUSHMAN_002,
+    
+    /// Earlier version of `code-cushman-002`
+    /// 
+    /// | MAX TOKENS  | TRAINING DATA  | SERIES |
+    /// | :---------- | :------------- | :----- |
+    /// | 2048 tokens | -              | Codex  |
+    #[deprecated(note = "The Codex models are now deprecated.")]
     #[serde(rename = "code-cushman-001")]
     CODE_CUSHMAN_001,
 
@@ -244,6 +264,8 @@ impl Into<&'static str> for Model {
             Model::TEXT_EMBEDDING_ADA_002_v2 => "text-embedding-ada-002-v2",
             Model::TEXT_SEARCH_ADA_DOC_001 => "text-search-ada-doc-001",
             Model::CODE_DAVINCI_002 => "code-davinci-002",
+            Model::CODE_DAVINCI_001 => "code-davinci-001",
+            Model::CODE_CUSHMAN_002 => "code-cushman-002",
             Model::CODE_CUSHMAN_001 => "code-cushman-001",
             Model::TEXT_MODERATION_LATEST => "text-moderation-latest",
             Model::TEXT_MODERATION_STABLE => "text-moderation-stable",
