@@ -2,7 +2,7 @@
 name = "rust-ai"
 authors = ["Zhongdong Yang"]
 description = "A collection of 3rd-party AI APIs for Rust"
-version = "0.1.17"
+version = "0.1.18"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/dongsxyz/rust-ai/"
@@ -23,19 +23,19 @@ name = "rsai"
 path = "src/main.rs"
 
 [dependencies]
-reqwest = { version = "0.11.15", default-features = false, features = [
+reqwest = { version = "0.11.17", default-features = false, features = [
   "json",
   "multipart",
   "rustls-tls",
 ] }
-serde = { version = "1.0.158", features = ["derive"] }
-serde_json = "1.0.94"
-serde_yaml = "0.9.19"
-tokio = { version = "1.26.0", features = ["full"] }
+serde = { version = "1.0.162", features = ["derive"] }
+serde_json = "1.0.96"
+serde_yaml = "0.9.21"
+tokio = { version = "1.28.0", features = ["full"] }
 log = "0.4.17"
 log4rs = "1.2.0"
-serde_with = "2.3.1"
-isolang = { version = "2.2.0", features = ["serde"] }
+serde_with = "3.0.0"
+isolang = { version = "2.3.0", features = ["serde"] }
 lazy_static = "1.4.0"
 urlencoding = "2.1.2"
-regex = "1.7.3"
+regex = "1.8.1"
