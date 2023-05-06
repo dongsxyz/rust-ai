@@ -22,8 +22,9 @@ Provide a collection of third-party APIs that give public access to AI capabilit
 | Moderation       | -              | `text-moderation-latest`[^note_2], `text-moderation-stable` | -      |
 
 Note:
-- Updated on March 24rd, 2023
+- Updated on May 6th, 2023
 - OpenAI's Fine Tunes endpoints are currently not supported.
+- All Codex models are now deprecated by OpenAI.
 
 ### Azure
 
