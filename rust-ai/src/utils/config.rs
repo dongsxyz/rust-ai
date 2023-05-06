@@ -88,6 +88,9 @@ pub struct OpenAi {
     /// API key obtained from <https://openai.com>.
     pub api_key: String,
 
+    /// OpenAI Organization ID
+    pub org_id: Option<String>,
+
     /// Alternative base endpoint for OpenAI.
     pub base_endpoint: Option<String>,
 }

@@ -189,11 +189,13 @@ where
     }
 
     req = req.header("Authorization", format!("Bearer {}", config.openai.api_key));
+    if config.openai.org_id.is_some() {
+        req = req.header("OpenAI-Organization", config.openai.org_id.clone().unwrap());
+    }
 
     if let Some(req_clone) = req.try_clone() {
         log::debug!(target: "requests", "Headers `{:?}`", req_clone.build().unwrap().headers());
     };
-
 
     let res = req.json(&json).send().await?;
 
@@ -247,11 +249,13 @@ where
     }
 
     req = req.header("Authorization", format!("Bearer {}", config.openai.api_key));
+    if config.openai.org_id.is_some() {
+        req = req.header("OpenAI-Organization", config.openai.org_id.clone().unwrap());
+    }
 
     if let Some(req_clone) = req.try_clone() {
         log::debug!(target: "requests", "Headers `{:?}`", req_clone.build().unwrap().headers());
     };
-
 
     let mut res = req.json(&json).send().await?;
 
