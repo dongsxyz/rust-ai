@@ -22,8 +22,8 @@
 //! 
 //! | Category         | Variant        | Tested Models            | Stream |
 //! | :--------------- | :------------- | :----------------------- | :----: |
-//! | Chat completions | -              | `gpt-4`, `gpt-4-0314`, `gpt-3.5-turbo`, `gpt-3.5-turbo-0301`, `text-davinci-003`, `text-davinci-002`, `code-davinci-002`[^note_3] | yes    |ext-davinci-002`, `code-davinci-002` | yes    |
-//! | Completions      | -              | `gpt-3.5-turbo`, `gpt-3.5-turbo-0301`, `text-davinci-003`       | yes    |   | yes    |
+//! | Chat completions | -              | `gpt-4`, `gpt-4-0314`, `gpt-4-0613`, `gpt-3.5-turbo`, `gpt-3.5-turbo-16k`, `gpt-3.5-turbo-16k-0613`, `gpt-3.5-turbo-0613`, `gpt-3.5-turbo-0301`, `text-davinci-003`, `text-davinci-002`, `code-davinci-002`[^note_3] | yes    |ext-davinci-002`, `code-davinci-002` | yes    |
+//! | Completions      | -              | `gpt-3.5-turbo`, `gpt-3.5-turbo-16k`, `gpt-3.5-turbo-16k-0613`, `gpt-3.5-turbo-0613`, `gpt-3.5-turbo-0301`, `text-davinci-003`       | yes    |   | yes    |
 //! | Edits            | -              | `text-davinci-edit-001`, `code-davinci-edit-001`  | -      |
 //! | Images           | Generations    | `dall-e`[^note_1]        | -      |
 //! | Images           | Edits          | `dall-e`[^note_1]        | -      |
@@ -34,7 +34,7 @@
 //! | Moderation       | -              | `text-moderation-latest`[^note_2], `text-moderation-stable` | -      |
 //! 
 //! Note: 
-//! - Updated on May 6th, 2023.
+//! - Updated on June 16th, 2023.
 //! - OpenAI's Fine Tunes endpoints are currently not supported.
 //! 
 //! [^note_1]: `dall-e` is an hypothetical name of the unknown model. 
@@ -46,7 +46,7 @@
 //! its API endpoints to specify variants other than `text-moderation-latest` 
 //! and `text-moderation-stable`.
 //! 
-//! [^note_3]: GPT-4/GPT-4-0314 tested, GPT-4-32K/GPT-4-32K-0314 not tested 
+//! [^note_3]: GPT-4/GPT-4-0314/GPT-4-0613 tested, GPT-4-32K/GPT-4-32K-0314 not tested 
 //! because developer currently only has access to 8K token ones (May 6th, 
 //! 2023).
 //! 

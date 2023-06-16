@@ -24,10 +24,15 @@ pub fn endpoint_filter(model: &Model, endpoint: &Endpoint) -> bool {
     match endpoint {
         Endpoint::ChatCompletion_v1 => [
             Model::GPT_3_5_TURBO,
+            Model::GPT_3_5_TURBO_16K,
+            Model::GPT_3_5_TURBO_16K_0613,
+            Model::GPT_3_5_TURBO_0613,
             Model::GPT_3_5_TURBO_0301,
             Model::GPT_4,
+            Model::GPT_4_0613,
             Model::GPT_4_0314,
             Model::GPT_4_32K,
+            Model::GPT_4_32K_0613,
             Model::GPT_4_32K_0314,
         ]
         .contains(&model),

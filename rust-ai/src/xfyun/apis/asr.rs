@@ -14,6 +14,6 @@ pub struct ASRBuilder {
   pd: Option<ProfessionalDomain>,
   audio_mode: Option<AudioMode>,
   audio_url: Option<String>,
-  standard_wav_type: Option<WavType>,
-  language_mix_type: Option<LanguageMixType>,
+  // standard_wav_type: Option<WavType>,
+  // language_mix_type: Option<LanguageMixType>,
 }

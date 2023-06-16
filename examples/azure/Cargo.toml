@@ -1,11 +1,11 @@
 [package]
 name = "rust-ai-azure-examples"
 edition = "2021"
-version = "0.1.1"
+version = "0.1.2"
 
 [dependencies]
 rust-ai = { path = "../../rust-ai" }
-tokio = { version = "1.26.0", features = ["full"] }
+tokio = { version = "1.28.1", features = ["full"] }
 log = "0.4.17"
 log4rs = "1.2.0"
 
