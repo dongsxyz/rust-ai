@@ -16,5 +16,8 @@ pub mod openai;
 /// Azure endpoint collection
 pub mod azure;
 
+/// Xunfei endpoint collection
+pub mod xfyun;
+
 /// Support functions
 pub mod utils;
