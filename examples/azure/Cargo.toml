@@ -5,8 +5,8 @@ version = "0.1.2"
 
 [dependencies]
 rust-ai = { path = "../../rust-ai" }
-tokio = { version = "1.28.1", features = ["full"] }
-log = "0.4.17"
+tokio = { version = "1.33.0", features = ["full"] }
+log = "0.4.20"
 log4rs = "1.2.0"
 
 [[bin]]
