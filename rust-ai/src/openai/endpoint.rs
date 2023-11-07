@@ -26,14 +26,17 @@ pub fn endpoint_filter(model: &Model, endpoint: &Endpoint) -> bool {
             Model::GPT_3_5_TURBO,
             Model::GPT_3_5_TURBO_16K,
             Model::GPT_3_5_TURBO_16K_0613,
-            Model::GPT_3_5_TURBO_0613,
             Model::GPT_3_5_TURBO_0301,
+            Model::GPT_3_5_TURBO_0613,
+            Model::GPT_3_5_TURBO_1106,
             Model::GPT_4,
             Model::GPT_4_0613,
             Model::GPT_4_0314,
             Model::GPT_4_32K,
             Model::GPT_4_32K_0613,
             Model::GPT_4_32K_0314,
+            Model::GPT_4_TURBO,
+            Model::GPT_4_TURBO_WITH_VISION,
         ]
         .contains(&model),
         Endpoint::Completion_v1 => [

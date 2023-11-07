@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use rust_ai::openai::Image;
+use rust_ai::openai::{Image, Model};
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     std::env::set_var("RUST_LOG", "debug");
@@ -13,7 +13,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 A cozy living room with a fireplace burning bright. A family gathering with smiles all around. Children playing with their furry friends. Soft blankets and pillows strewn about. Cups of hot cocoa steaming on the table. Candles flickering in the warm glow. A peaceful silence, broken only by happy laughter. A contented cat curled up on a lap. A cute puppy wagging its tail and chasing a toy. A sense of love and togetherness that lifts the soul.
         "#
             .trim(),
-        )
+        ).model(Model::DALL_E_3) // Use DALL·E 3
         .generation()
         .await?;
     println!("{}", result.data.get(0).unwrap().url.clone().unwrap());

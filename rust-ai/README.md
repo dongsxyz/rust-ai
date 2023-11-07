@@ -13,17 +13,18 @@ Provide a collection of third-party APIs that give public access to AI capabilit
 | Chat completions | -              | `gpt-4`, `gpt-4-0314`, `gpt-4-0613`, `gpt-3.5-turbo`, `gpt-3.5-turbo-16k`, `gpt-3.5-turbo-16k-0613`, `gpt-3.5-turbo-0613`, `gpt-3.5-turbo-0301`, `text-davinci-003`, `text-davinci-002`, `code-davinci-002`[^note_3] | yes    |ext-davinci-002`, `code-davinci-002` | yes    |
 | Completions      | -              | `gpt-3.5-turbo`, `gpt-3.5-turbo-16k`, `gpt-3.5-turbo-16k-0613`, `gpt-3.5-turbo-0613`, `gpt-3.5-turbo-0301`, `text-davinci-003`       | yes    |   | yes    |
 | Edits            | -              | `text-davinci-edit-001`, `code-davinci-edit-001`  | -      |
-| Images           | Generations    | `dall-e`[^note_1]        | -      |
-| Images           | Edits          | `dall-e`[^note_1]        | -      |
-| Images           | Variations     | `dall-e`[^note_1]        | -      |
+| Images           | Generations    | `dall-e-2`, `dall-e-3`       | -      |
+| Images           | Edits          | `dall-e-2`       | -      |
+| Images           | Variations     | `dall-e-2`       | -      |
 | Embeddings       | -              | `text-embedding-ada-002`[^note_4] | -      |
 | Audios           | Transcriptions | `whisper-1`              | -      |
 | Audios           | Translation    | `whisper-1`              | -      |
 | Moderation       | -              | `text-moderation-latest`[^note_2], `text-moderation-stable` | -      |
 
 Note: 
-- Updated on June 16th, 2023.
+- Updated on November 7th, 2023.
 - OpenAI's Fine Tunes endpoints are currently not supported.
+- OpenAI's Assistants endpoints are currently not supported.
 
 ### Azure
 
@@ -50,10 +51,6 @@ azure:
 ```
 
 If you prefer to load configuration from environment variables, set the contents to `RUST_AI_CONFIG` like example `chat-completion-streamed` does.
-
-[^note_1]: `dall-e` is an hypothetical name of the unknown model. 
-Currently, OpenAI doesn't support manually specify model for image related 
-tasks. So DALL·E models are not valid variants of `Model` enum.
 
 [^note_2]: OpenAI's responses for moderation indicate usage of 
 `text-moderation-004` model (March 23rd, 2023). But developers cannot use 

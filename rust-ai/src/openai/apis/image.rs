@@ -16,6 +16,7 @@ use crate::openai::{
         common::Error,
         image::{Format, ImageResponse, Size},
     },
+    Model,
 };
 use log::{debug, warn};
 use reqwest::multipart::{Form, Part};
@@ -47,6 +48,9 @@ pub struct Image {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub user: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub model: Option<Model>,
 }
 
 impl Default for Image {
@@ -59,6 +63,7 @@ impl Default for Image {
             response_format: None,
             user: None,
             n: None,
+            model: Some(Model::DALL_E_2),
         }
     }
 }
@@ -87,6 +92,18 @@ impl Image {
     pub fn image(self, filename: &str, bytes: Vec<u8>) -> Self {
         Self {
             image: Some((filename.into(), bytes.clone())),
+            ..self
+        }
+    }
+
+    /// Select between DALL·E 3 and DALL·E 2, default DALL·E 2 (if not
+    /// specified).
+    ///
+    /// # Arguments
+    /// - `model` - Model to be used
+    pub fn model(self, model: Model) -> Self {
+        Self {
+            model: Some(model),
             ..self
         }
     }
