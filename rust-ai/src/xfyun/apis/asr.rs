@@ -1,5 +1,6 @@
 use crate::xfyun::types::asr::{Language, ProfessionalDomain, AudioMode};
 
+#[allow(dead_code)]
 pub struct ASRBuilder {
   file: Vec<u8>,
   file_name: String,

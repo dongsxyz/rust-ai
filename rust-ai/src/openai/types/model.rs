@@ -24,19 +24,38 @@ use serde::{Deserialize, Serialize};
 /// An enum of OpenAI models
 ///
 /// Note: GPT-4 are not publicly availble yet (Mar 22, 2023).
-#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 #[allow(non_camel_case_types)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 pub enum Model {
-    /// The latest GPT-4 model with improved instruction following, JSON mode,
-    /// reproducible outputs, parallel function calling, and more. Returns a
-    /// maximum of 4,096 output tokens. This preview model is not yet suited
-    /// for production traffic. [Learn more](https://openai.com/blog/new-models-and-developer-products-announced-at-devday).
+    /// **GPT-4 Turbo**
+    /// 
+    /// The latest GPT-4 model intended to reduce cases of “laziness” where the
+    /// model doesn’t complete a task. Returns a maximum of 4,096 output 
+    /// tokens. [Learn more](https://openai.com/blog/new-embedding-models-and-api-updates).
+    ///
+    /// | MAX TOKENS    | TRAINING DATA  | SERIES |
+    /// | :------------ | :------------- | :----- |
+    /// | 128000 tokens | Up to Dec 2023 | GPT-4  |
+    #[serde(rename = "gpt-4-0125-preview")]
+    GPT_4_0125_PREVIEW,
+
+    /// Currently points to gpt-4-0125-preview.
+    ///
+    /// | MAX TOKENS    | TRAINING DATA  | SERIES |
+    /// | :------------ | :------------- | :----- |
+    /// | 128000 tokens | Up to Dec 2023 | GPT-4  |
+    #[serde(rename = "gpt-4-turbo-preview")]
+    GPT_4_TURBO_PREVIEW,
+
+    /// GPT-4 Turbo model featuring improved instruction following, JSON mode,
+    /// reproducible outputs, parallel function calling, and more. Returns a 
+    /// maximum of 4,096 output tokens. This is a preview model. [Learn more](https://openai.com/blog/new-models-and-developer-products-announced-at-devday).
     ///
     /// | MAX TOKENS    | TRAINING DATA  | SERIES |
     /// | :------------ | :------------- | :----- |
     /// | 128000 tokens | Up to Apr 2023 | GPT-4  |
     #[serde(rename = "gpt-4-1106-preview")]
-    GPT_4_TURBO,
+    GPT_4_1106_PREVIEW,
 
     /// Ability to understand images, in addition to all other GPT-4 Turbo
     /// capabilties. Returns a maximum of 4,096 output tokens. This is a
@@ -48,6 +67,16 @@ pub enum Model {
     /// | 128000 tokens | Up to Apr 2023 | GPT-4  |
     #[serde(rename = "gpt-4-vision-preview")]
     GPT_4_TURBO_WITH_VISION,
+
+    /// GPT-4 with the ability to understand images, in addition to all other
+    /// GPT-4 Turbo capabilities. Returns a maximum of 4,096 output tokens. 
+    /// This is a preview model version. [Learn more](https://openai.com/blog/new-models-and-developer-products-announced-at-devday).
+    ///
+    /// | MAX TOKENS    | TRAINING DATA  | SERIES |
+    /// | :------------ | :------------- | :----- |
+    /// | 128000 tokens | Up to Apr 2023 | GPT-4  |
+    #[serde(rename = "gpt-4-1106-vision-preview")]
+    GPT_4_TURBO_1106_WITH_VISION,
 
     /// More capable than any GPT-3.5 model, able to do more complex tasks, and
     /// optimized for chat. Will be updated with our latest model iteration.
@@ -112,6 +141,19 @@ pub enum Model {
     #[serde(rename = "gpt-4-32k-0314")]
     GPT_4_32K_0314,
 
+    /// **Updated GPT 3.5 Turbo**
+    /// 
+    /// The latest GPT-3.5 Turbo model with higher accuracy at responding in 
+    /// requested formats and a fix for a bug which caused a text encoding 
+    /// issue for non-English language function calls. Returns a maximum of 
+    /// 4,096 output tokens. [Learn more](https://openai.com/blog/new-embedding-models-and-api-updates#:~:text=Other%20new%20models%20and%20lower%20pricing)
+    ///
+    /// | MAX TOKENS  | TRAINING DATA  | SERIES  |
+    /// | :---------- | :------------- | :------ |
+    /// | 16,385 tokens | Up to Sep 2021 | GPT-3.5 |
+    #[serde(rename = "gpt-3.5-turbo-0125")]
+    GPT_3_5_TURBO_0125,
+
     /// Most capable GPT-3.5 model and optimized for chat at 1/10th the cost of
     /// `text-davinci-003`. Will be updated with our latest model iteration.
     ///
@@ -137,6 +179,7 @@ pub enum Model {
     /// Same capabilities as the standard `gpt-3.5-turbo` model but with 4
     /// times the context.
     ///
+    /// Note: currently points to gpt-3.5-turbo-16k-0613
     /// | MAX TOKENS    | TRAINING DATA  | SERIES  |
     /// | :------------ | :------------- | :------ |
     /// | 16,385 tokens | Up to Sep 2021 | GPT-3.5 |
@@ -146,20 +189,26 @@ pub enum Model {
     /// Snapshot of `gpt-3.5-turbo-16k` from June 13th 2023. Unlike
     /// `gpt-3.5-turbo-16k`, this model will not receive updates, and will be
     /// deprecated 3 months after a new version is released.
+    /// 
+    /// Note: Will be deprecated on June 13, 2024.
     ///
     /// | MAX TOKENS    | TRAINING DATA  | SERIES  |
     /// | :------------ | :------------- | :------ |
     /// | 16,385 tokens | Up to Sep 2021 | GPT-3.5 |
+    #[deprecated(note = "Discontinuation date 2024-06-13")]
     #[serde(rename = "gpt-3.5-turbo-16k-0613")]
     GPT_3_5_TURBO_16K_0613,
 
     /// Snapshot of `gpt-3.5-turbo` from June 13th 2023 with function calling
     /// data. Unlike `gpt-3.5-turbo`, this model will not receive updates, and
     /// will be deprecated 3 months after a new version is released.
+    /// 
+    /// Note: Will be deprecated on June 13, 2024.
     ///
     /// | MAX TOKENS   | TRAINING DATA  | SERIES  |
     /// | :----------- | :------------- | :------ |
     /// | 4,096 tokens | Up to Sep 2021 | GPT-3.5 |
+    #[deprecated(note = "Discontinuation date 2024-06-13")]
     #[serde(rename = "gpt-3.5-turbo-0613")]
     GPT_3_5_TURBO_0613,
 
@@ -355,6 +404,7 @@ pub enum Model {
     UNKNOWN,
 }
 
+#[allow(deprecated)]
 impl Into<&'static str> for Model {
     fn into(self) -> &'static str {
         match self {
@@ -395,13 +445,17 @@ impl Into<&'static str> for Model {
             Model::TEXT_MODERATION_003 => "text-moderation-003",
             Model::TEXT_MODERATION_004 => "text-moderation-004",
             Model::UNKNOWN => "unknown",
-            Model::GPT_4_TURBO => "gpt-4-1106-preview",
             Model::GPT_4_TURBO_WITH_VISION => "gpt-4-vision-preview",
             Model::GPT_3_5_TURBO_1106 => "gpt-3.5-turbo-1106",
             Model::DALL_E_3 => "dall-e-3",
             Model::DALL_E_2 => "dall-e-2",
             Model::TTS_1 => "tts-1",
             Model::TTS_1_HD => "tts-1-hd",
+            Model::GPT_4_0125_PREVIEW => "gpt-4-0125-preview",
+            Model::GPT_4_TURBO_PREVIEW => "gpt-4-turbo-preview",
+            Model::GPT_4_1106_PREVIEW => "gpt-4-1106-preview",
+            Model::GPT_4_TURBO_1106_WITH_VISION => "gpt-4-1106-vision-preview",
+            Model::GPT_3_5_TURBO_0125 => "gpt-3.5-turbo-0125",
         }
     }
 }
